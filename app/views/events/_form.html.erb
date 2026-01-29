@@ -1,0 +1,92 @@
+<%= form_with model: event, local: true do |form| %>
+  <% if event.errors.any? %>
+    <div class="alert">
+      <ul>
+        <% event.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title, placeholder: "Event title" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :description %>
+    <%= form.text_area :description, placeholder: "Event description" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :assigned_user_ids, "Assign Users" %>
+    <%= hidden_field_tag "event[assigned_user_ids][]", "", id: nil %>
+    <div class="user-assignment-container">
+      <div class="user-search-box">
+        <input type="text" id="user-search" placeholder="Search users..." class="user-search-input">
+      </div>
+      <div class="user-list-container">
+        <% if @users.present? %>
+          <% @users.each do |user| %>
+            <label class="user-checkbox-item">
+              <%= check_box_tag "event[assigned_user_ids][]", user["id"], 
+                  event.assigned_user_ids&.include?(user["id"].to_s) || event.assigned_user_ids&.include?(user["id"]),
+                  id: "user_#{user["id"]}", class: "user-checkbox" %>
+              <div class="user-info">
+                <span class="user-name"><%= user["name"] %></span>
+                <span class="user-email"><%= user["email"] %></span>
+              </div>
+            </label>
+          <% end %>
+        <% else %>
+          <p class="no-users">Loading users...</p>
+        <% end %>
+      </div>
+      <div class="selected-users-count">
+        <span id="selected-count">0</span> user(s) selected
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", events_path, class: "btn btn-secondary" %>
+  </div>
+<% end %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('user-search');
+    const checkboxes = document.querySelectorAll('.user-checkbox');
+    const selectedCountEl = document.getElementById('selected-count');
+    
+    function updateSelectedCount() {
+      const selected = document.querySelectorAll('.user-checkbox:checked').length;
+      selectedCountEl.textContent = selected;
+    }
+    
+    function filterUsers() {
+      const searchTerm = searchInput.value.toLowerCase();
+      checkboxes.forEach(function(checkbox) {
+        const label = checkbox.closest('.user-checkbox-item');
+        const userName = label.querySelector('.user-name').textContent.toLowerCase();
+        const userEmail = label.querySelector('.user-email').textContent.toLowerCase();
+        
+        if (userName.includes(searchTerm) || userEmail.includes(searchTerm)) {
+          label.style.display = 'flex';
+        } else {
+          label.style.display = 'none';
+        }
+      });
+    }
+    
+    searchInput.addEventListener('input', filterUsers);
+    
+    checkboxes.forEach(function(checkbox) {
+      checkbox.addEventListener('change', updateSelectedCount);
+    });
+    
+    updateSelectedCount();
+  });
+</script>

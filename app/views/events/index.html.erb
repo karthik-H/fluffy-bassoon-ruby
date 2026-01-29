@@ -1,0 +1,32 @@
+<h1>Events</h1>
+
+<%= link_to "Add New Event", new_event_path, class: "btn btn-primary" %>
+
+<ul class="event-list">
+  <% @events.each do |event| %>
+    <li class="event-item">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div style="flex: 1;">
+          <h3>
+            <%= event.title %>
+            <% if event.assigned_user_count > 0 %>
+              <span class="user-count-badge"><%= event.assigned_user_count %> user<%= 's' if event.assigned_user_count != 1 %></span>
+            <% end %>
+          </h3>
+          <p><%= event.description.presence || "No description" %></p>
+        </div>
+      </div>
+      <div class="event-actions">
+        <%= link_to "View", event_path(event), class: "btn btn-secondary btn-small" %>
+        <%= link_to "Edit", edit_event_path(event), class: "btn btn-secondary btn-small" %>
+        <%= form_with url: event_path(event), method: :delete, local: true, html: { onsubmit: "return confirm('Are you sure?');" } do %>
+          <%= submit_tag "Remove", class: "btn btn-danger btn-small" %>
+        <% end %>
+      </div>
+    </li>
+  <% end %>
+</ul>
+
+<% if @events.empty? %>
+  <p>No events yet. <%= link_to "Add your first event", new_event_path %>.</p>
+<% end %>

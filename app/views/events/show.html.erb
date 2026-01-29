@@ -1,0 +1,28 @@
+<h1><%= @event.title %></h1>
+
+<p><%= @event.description.presence || "No description" %></p>
+
+<div class="assigned-users-section">
+  <div class="assigned-users-title">Assigned Users</div>
+  <% assigned_users = @event.assigned_users %>
+  <% if assigned_users.present? %>
+    <div class="assigned-users-list">
+      <% assigned_users.each do |user| %>
+        <div class="assigned-user-badge">
+          <span class="user-avatar"><%= user["name"].split.first[0] %></span>
+          <%= user["name"] %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="no-assigned-users">No users assigned to this event.</p>
+  <% end %>
+</div>
+
+<div class="actions">
+  <%= link_to "Edit", edit_event_path(@event), class: "btn btn-primary" %>
+  <%= link_to "Back to Events", events_path, class: "btn btn-secondary" %>
+  <%= form_with url: event_path(@event), method: :delete, local: true, html: { onsubmit: "return confirm('Are you sure?');" } do %>
+    <%= submit_tag "Remove", class: "btn btn-danger" %>
+  <% end %>
+</div>
