@@ -1,129 +1,71 @@
-# Event Manager — Ruby on Rails Application
-
-A simple event management application built with Ruby on Rails. It provides a user interface to **add**, **edit**, and **remove** events. Each event has a **title** and **description**.
+Event Manager lets you create and manage **events**. Each event has a title and description, and you can **assign people** to an event. The list of people you can assign comes from an external source (a sample user list); the app does not let you create or manage those people—only choose who is assigned to each event.
 
 ---
 
-## Prerequisites
+## What you can do
 
-Before running this application, ensure you have the following installed:
+### View all events
 
-- **Ruby** 3.1 or newer (`ruby --version`)
-- **Bundler** (`gem install bundler` if needed)
-- **SQLite3** (used for the database)
+- From the home page you see a **list of all events**, newest first.
+- Each event shows:
+  - Title
+  - Description (or “No description” if empty)
+  - How many people are assigned (e.g. “2 users”)
+  - Buttons: **View**, **Edit**, **Remove**
+- If there are no events, you see a short message and a link to add your first event.
 
----
+### View a single event
 
-## How to Run the Application
+- You can open one event to see its full details.
+- You see:
+  - Title and description
+  - **Assigned users** — the names of everyone assigned to this event (or “No users assigned” if none)
+  - Buttons: **Edit**, **Back to Events**, **Remove**
 
-### 1. Install dependencies
+### Create a new event
 
-From the project root:
+- You can create an event by going to **New Event** (from the header or the link on the list).
+- You fill in:
+  - **Title** (required)
+  - **Description** (optional)
+  - **Assign users** — you pick from a list of available users; you can search by name or email and select one or more with checkboxes. A counter shows how many you’ve selected.
+- You then **Save** or **Cancel**. After saving, you are taken to the new event’s page and see a success message.
 
-```bash
-bundle install
-```
+### Edit an event
 
-If you get permission errors, you can install gems in a user directory:
+- From the event list or the event detail page, you can **Edit** an event.
+- You can change the title, description, and assigned users (add or remove people).
+- You **Save** to apply changes or **Cancel** to go back without saving. You see a success message when the update works.
 
-```bash
-bundle install --path vendor/bundle
-```
+### Remove an event
 
-### 2. Create the database and run migrations
-
-Create the SQLite database and apply the events table migration:
-
-```bash
-bundle exec rails db:create
-bundle exec rails db:migrate
-```
-
-Or in one step:
-
-```bash
-bundle exec rails db:prepare
-```
-
-### 3. (Optional) Seed data
-
-You can add sample events via the Rails console:
-
-```bash
-bundle exec rails console
-```
-
-Then in the console:
-
-```ruby
-Event.create!(title: "Team Meeting", description: "Weekly sync")
-Event.create!(title: "Product Launch", description: "Release v2.0")
-exit
-```
-
-### 4. Start the Rails server
-
-Start the development server (default port 3000):
-
-```bash
-bundle exec rails server
-```
-
-Or:
-
-```bash
-bundle exec rails s
-```
-
-To use a different port (e.g. 4000):
-
-```bash
-bundle exec rails server -p 4000
-```
-
-### 5. Open the application in your browser
-
-Visit:
-
-- **http://localhost:3000**
-
-You should see the Events list. From there you can:
-
-- **Add** a new event: click “Add New Event”, fill in title and description, then submit.
-- **Edit** an event: click “Edit” on an event, change the fields, and save.
-- **Remove** an event: click “Remove” and confirm.
+- From the event list or the event detail page, you can **Remove** an event.
+- The app asks for confirmation (“Are you sure?”). If you confirm, the event is deleted and you are returned to the event list with a message.
 
 ---
 
-## Project structure (relevant parts)
+## Assigning users to events
 
-| Path | Purpose |
-|------|--------|
-| `app/controllers/events_controller.rb` | CRUD actions for events |
-| `app/models/event.rb` | Event model (title, description) |
-| `app/views/events/` | Index, show, new, edit, and form partial |
-| `config/routes.rb` | Routes (root + `resources :events`) |
-| `db/migrate/` | Migration that creates the `events` table |
-| `db/schema.rb` | Current database schema |
-
----
-
-## Troubleshooting
-
-- **“Rails is not installed”**  
-  Run `bundle install` in the project root. If Rails still isn’t found, ensure your Ruby version is 3.1+ and run `bundle install` again.
-
-- **Database errors**  
-  Run `bundle exec rails db:drop db:create db:migrate` to reset the database (this deletes all data).
-
-- **Port 3000 already in use**  
-  Start the server on another port: `bundle exec rails server -p 4000`, then open http://localhost:4000.
-
-- **SQLite3 missing**  
-  Install SQLite3 for your OS (e.g. `brew install sqlite3` on macOS).
+- When creating or editing an event, you see an **Assign Users** section.
+- The app shows a **list of users** (name and email) that you can assign. This list is loaded from an external sample data source; you cannot add, edit, or delete users in the app—only choose who is assigned to each event.
+- You can:
+  - **Search** by typing in the search box (filters by name or email).
+  - **Select** or **deselect** users with checkboxes.
+  - See how many users are currently selected.
+- You can assign no one, one person, or many people to an event. Saving the event stores your choices; on the event list you see how many users are assigned, and on the event detail page you see their names.
 
 ---
 
-## Running the Playwright integration tests
+## Navigation and layout
 
-See **[PLAYWRIGHT_TESTS.md](PLAYWRIGHT_TESTS.md)** for how to run the add-event Playwright integration tests (with server mocking and video recording) and how to view the results.
+- **Header** (at the top of every page):
+  - App name **Event Manager** (clicking it takes you home).
+  - Links: **All Events**, **New Event**. The current section is highlighted.
+- **Breadcrumbs** (just below the header):
+  - Show where you are, e.g. Home › Events › [Event name] › Edit.
+  - You can click any part to go back to that level.
+- **Messages**:
+  - Success messages (e.g. “Event was successfully created”) appear at the top of the main content area in green.
+  - Error or alert messages appear in red when something goes wrong.
+
+---
