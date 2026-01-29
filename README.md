@@ -1,5 +1,5 @@
 Event Manager lets you create and manage **events**. Each event has a title and description, and you can **assign people** to an event. The list of people you can assign comes from an external source (a sample user list); the app does not let you create or manage those people—only choose who is assigned to each event. 
-
+ 
 ---
  
 ## What you can do
