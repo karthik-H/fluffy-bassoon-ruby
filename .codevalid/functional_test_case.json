@@ -1,5 +1,314 @@
 {
-  "function": [],
+  "function": [
+    {
+      "implementation_id": "fetch_users_external_source",
+      "test_cases": [
+        {
+          "description": "Test that fetch_users returns an array of user objects with only 'name' and 'email' fields when the external API responds with 200 and valid user data.",
+          "id": "fetch_users_successful_response",
+          "implementation_id": "fetch_users_external_source",
+          "name": "Fetch users with successful 200 response",
+          "test_setup": {
+            "given": "The JSONPlaceholder API endpoint returns HTTP 200 with a JSON array of user objects, each containing at least 'name' and 'email' fields.",
+            "then": "An array of users is returned, each containing 'name' and 'email'.",
+            "when": "JsonplaceholderService.fetch_users is called"
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Test that fetch_users returns an empty array when the external API responds with a non-200 HTTP status (e.g., 404).",
+          "id": "fetch_users_non_200_response",
+          "implementation_id": "fetch_users_external_source",
+          "name": "Fetch users with non-200 response code",
+          "test_setup": {
+            "given": "The JSONPlaceholder API endpoint returns HTTP 404 with an empty body.",
+            "then": "An empty array is returned.",
+            "when": "JsonplaceholderService.fetch_users is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Test that fetch_users returns an empty array and logs an error when a network error (e.g., timeout, connection refused) occurs.",
+          "id": "fetch_users_network_error",
+          "implementation_id": "fetch_users_external_source",
+          "name": "Fetch users with network error",
+          "test_setup": {
+            "given": "A network error occurs during the HTTP GET request to the JSONPlaceholder API.",
+            "then": "An empty array is returned and an error is logged.",
+            "when": "JsonplaceholderService.fetch_users is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Test that fetch_users returns an empty array and logs an error when the API responds with HTTP 200 but invalid JSON.",
+          "id": "fetch_users_invalid_json",
+          "implementation_id": "fetch_users_external_source",
+          "name": "Fetch users with invalid JSON response",
+          "test_setup": {
+            "given": "The JSONPlaceholder API endpoint returns HTTP 200, but the response body is not valid JSON.",
+            "then": "An empty array is returned and an error is logged.",
+            "when": "JsonplaceholderService.fetch_users is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Test that fetch_users returns an empty array when the API responds with HTTP 200 and an empty array.",
+          "id": "fetch_users_empty_array_response",
+          "implementation_id": "fetch_users_external_source",
+          "name": "Fetch users with empty array response",
+          "test_setup": {
+            "given": "The JSONPlaceholder API endpoint returns HTTP 200 with an empty JSON array as the response body.",
+            "then": "An empty array is returned.",
+            "when": "JsonplaceholderService.fetch_users is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Test that fetch_users includes users with missing 'name' or 'email' as null or omits those users, based on implementation, when the API responds with user objects missing these fields.",
+          "id": "fetch_users_missing_name_or_email",
+          "implementation_id": "fetch_users_external_source",
+          "name": "Fetch users with missing 'name' or 'email' fields",
+          "test_setup": {
+            "given": "The JSONPlaceholder API returns HTTP 200 with a JSON array containing some user objects missing 'name' or 'email' fields.",
+            "then": "Returned array reflects whether users with missing fields are included with nulls or omitted.",
+            "when": "JsonplaceholderService.fetch_users is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Test that fetch_users returns an empty array if the API responds with HTTP 200 but an empty (not even an array) response body.",
+          "id": "fetch_users_empty_response_body",
+          "implementation_id": "fetch_users_external_source",
+          "name": "Fetch users with HTTP 200 and empty response body",
+          "test_setup": {
+            "given": "The JSONPlaceholder API endpoint returns HTTP 200 with an empty string as the response body.",
+            "then": "An empty array is returned and an error may be logged.",
+            "when": "JsonplaceholderService.fetch_users is called"
+          },
+          "type": "edge"
+        }
+      ]
+    }
+  ],
   "component": [],
-  "endpoint": []
+  "endpoint": [
+    {
+      "implementation_id": "events_controller_show_action",
+      "test_cases": [
+        {
+          "description": "Verify that the endpoint returns the correct event details and list of users for a valid event ID.",
+          "id": "tc_show_event_valid_id",
+          "implementation_id": "events_controller_show_action",
+          "name": "View event by valid ID",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "GET",
+          "request_url": "/events/1",
+          "response_body_json": {
+            "event": {
+              "date": "2024-09-15",
+              "description": "Company-wide annual meetup event.",
+              "id": 1,
+              "location": "Main Hall",
+              "title": "Annual Meetup"
+            },
+            "users": [
+              {
+                "id": 101,
+                "name": "Alice Johnson"
+              },
+              {
+                "id": 102,
+                "name": "Bob Smith"
+              }
+            ]
+          },
+          "response_status_code": 200,
+          "test_setup": {
+            "given": "An event with ID 1 exists and multiple users are present in the system.",
+            "then": "The response contains the event details and a list of all users.",
+            "when": "A GET request is made to /events/1."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Verify that the endpoint returns an appropriate error when the event ID does not exist.",
+          "id": "tc_show_event_nonexistent_id",
+          "implementation_id": "events_controller_show_action",
+          "name": "View event with nonexistent ID",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "GET",
+          "request_url": "/events/9999",
+          "response_body_json": {
+            "error": "Event not found"
+          },
+          "response_status_code": 404,
+          "test_setup": {
+            "given": "No event with ID 9999 exists.",
+            "then": "The response contains a 404 status and an error message.",
+            "when": "A GET request is made to /events/9999."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Verify that the endpoint handles requests with invalid event ID formats gracefully.",
+          "id": "tc_show_event_invalid_id_format",
+          "implementation_id": "events_controller_show_action",
+          "name": "View event with invalid ID format",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "GET",
+          "request_url": "/events/abc",
+          "response_body_json": {
+            "error": "Invalid event ID format"
+          },
+          "response_status_code": 400,
+          "test_setup": {
+            "given": "No event with ID 'abc' exists and the ID format is invalid.",
+            "then": "The response contains a 400 status and an error message.",
+            "when": "A GET request is made to /events/abc."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Verify that the endpoint returns an empty users array when no users are present in the system.",
+          "id": "tc_show_event_no_users",
+          "implementation_id": "events_controller_show_action",
+          "name": "View event when no users exist",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "GET",
+          "request_url": "/events/2",
+          "response_body_json": {
+            "event": {
+              "date": "2024-10-01",
+              "description": "Quarterly performance review.",
+              "id": 2,
+              "location": "Conference Room",
+              "title": "Quarterly Review"
+            },
+            "users": []
+          },
+          "response_status_code": 200,
+          "test_setup": {
+            "given": "An event with ID 2 exists but no users are present in the system.",
+            "then": "The response contains the event details and an empty users array.",
+            "when": "A GET request is made to /events/2."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Verify that the endpoint returns an error when the event ID is zero, which is typically invalid.",
+          "id": "tc_show_event_id_zero",
+          "implementation_id": "events_controller_show_action",
+          "name": "View event with ID zero",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "GET",
+          "request_url": "/events/0",
+          "response_body_json": {
+            "error": "Event not found"
+          },
+          "response_status_code": 404,
+          "test_setup": {
+            "given": "No event with ID 0 exists.",
+            "then": "The response contains a 404 status and an error message.",
+            "when": "A GET request is made to /events/0."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Verify that the endpoint handles requests for extremely large event IDs gracefully.",
+          "id": "tc_show_event_large_id",
+          "implementation_id": "events_controller_show_action",
+          "name": "View event with very large ID",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "GET",
+          "request_url": "/events/99999999999999",
+          "response_body_json": {
+            "error": "Event not found"
+          },
+          "response_status_code": 404,
+          "test_setup": {
+            "given": "No event with a very large ID exists.",
+            "then": "The response contains a 404 status and an error message.",
+            "when": "A GET request is made to /events/99999999999999."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Verify that the endpoint still returns a valid response even if the Content-Type header is missing (since it's a GET request with no body).",
+          "id": "tc_show_event_missing_content_type_header",
+          "implementation_id": "events_controller_show_action",
+          "name": "View event without Content-Type header",
+          "request_body_json": {},
+          "request_headers": {},
+          "request_method": "GET",
+          "request_url": "/events/1",
+          "response_body_json": {
+            "event": {
+              "date": "2024-09-15",
+              "description": "Company-wide annual meetup event.",
+              "id": 1,
+              "location": "Main Hall",
+              "title": "Annual Meetup"
+            },
+            "users": [
+              {
+                "id": 101,
+                "name": "Alice Johnson"
+              },
+              {
+                "id": 102,
+                "name": "Bob Smith"
+              }
+            ]
+          },
+          "response_status_code": 200,
+          "test_setup": {
+            "given": "An event with ID 1 exists and multiple users are present in the system.",
+            "then": "The response contains the event details and a list of all users.",
+            "when": "A GET request is made to /events/1 without the Content-Type header."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Verify that the endpoint is protected against SQL injection attempts in the event ID parameter.",
+          "id": "tc_show_event_sql_injection_attempt",
+          "implementation_id": "events_controller_show_action",
+          "name": "View event with SQL injection in ID",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "GET",
+          "request_url": "/events/1;DROP TABLE users;",
+          "response_body_json": {
+            "error": "Invalid event ID format"
+          },
+          "response_status_code": 400,
+          "test_setup": {
+            "given": "The request contains a SQL injection attempt in the event ID.",
+            "then": "The response contains a 400 status and an error message, and the database is unaffected.",
+            "when": "A GET request is made to /events/1;DROP TABLE users;."
+          },
+          "type": "negative"
+        }
+      ]
+    }
+  ]
 }
