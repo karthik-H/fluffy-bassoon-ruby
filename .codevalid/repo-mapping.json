@@ -18,18 +18,31 @@
     ]
   },
   "event_creation": {
-    "implementation": [],
-    "missing_implementations": []
+    "implementation": [
+      {
+        "How_is_it_connected_to_implementation": "Provides a navigation link to access the event creation form, fulfilling the requirement for a 'New Event' entry point.",
+        "change_type": "new",
+        "file_path": "app/views/layouts/application.html.erb",
+        "id": "nav_new_event_link",
+        "name": "New Event navigation link",
+        "pseudo_code": "IF user is on any page\n  SHOW 'New Event' link in navigation\n  ON click, redirect to /events/new",
+        "type": "component"
+      }
+    ],
+    "missing_implementations": [
+      "Success message must appear at the top of the main content area in green (currently uses Rails notice, but explicit color handling may be missing if not styled in CSS).",
+      "Error or alert messages must appear in red when something goes wrong (currently uses Rails alert, but explicit color handling may be missing if not styled in CSS)."
+    ]
   },
   "user_assignment_external_source": {
     "implementation": [
       {
-        "How_is_it_connected_to_implementation": "Fetches the list of users from the external JSONPlaceholder API. Only 'name' and 'email' are used for display and search.",
+        "How_is_it_connected_to_implementation": "Fetches the list of users from the external JSONPlaceholder API. Only 'name' and 'email' are used for display and search. However, the implementation currently caches the user list for 5 minutes, which violates the requirement to load fresh data each time the assignment UI is opened.",
         "change_type": "new",
         "file_path": "app/services/jsonplaceholder_service.rb",
         "id": "fetch_users_external_source",
         "name": "JsonplaceholderService.fetch_users",
-        "pseudo_code": "Call GET https://jsonplaceholder.typicode.com/users\nIf response is 200, parse JSON and return array of users\nElse, return empty array\nLog errors if any occur",
+        "pseudo_code": "Call GET https://jsonplaceholder.typicode.com/users\nIF response is 200\n    Parse JSON and return array of users\nELSE\n    Return empty array\nLog errors if any occur",
         "type": "function"
       }
     ],
@@ -37,6 +50,33 @@
       "The user list must not be cached locally beyond the current session (currently cached for 5 minutes)",
       "No explicit prevention of user assignment from sources other than the external API (relies on UI and controller logic)",
       "No explicit check that only 'name' and 'email' are used for display/search (other fields fetched but not used)"
+    ]
+  },
+  "event_list_display": {
+    "implementation": [],
+    "missing_implementations": []
+  },
+  "navigation_and_breadcrumbs": {
+    "implementation": [],
+    "missing_implementations": []
+  },
+  "event_removal": {
+    "implementation": [
+      {
+        "How_is_it_connected_to_implementation": "Provides a 'Remove' button for each event in the event list. The button triggers a confirmation prompt with the exact text 'Are you sure?' and submits a DELETE request to remove the event.",
+        "change_type": "new",
+        "file_path": "app/views/events/index.html.erb",
+        "id": "event_list_remove_button",
+        "name": "Remove button in event list",
+        "pseudo_code": "For each event in the list:\n  Display event details\n  Display 'Remove' button\n    On click:\n      Show confirmation prompt 'Are you sure?'\n      If confirmed:\n        Submit DELETE request for event\n      If cancelled:\n        Do nothing",
+        "type": "component"
+      }
+    ],
+    "missing_implementations": [
+      "The backend does not call the external API DELETE /events/{id} (simulated per JSONPlaceholder API); it only deletes from the local database.",
+      "The success message after deletion is 'Event was successfully removed.' instead of the required 'Event was successfully deleted.'",
+      "No explicit green color for the success message text; it uses a green background but not guaranteed to match the non-functional requirement for text color.",
+      "No test or handling for simulated response from JSONPlaceholder API as described in the api_specification."
     ]
   }
 }
