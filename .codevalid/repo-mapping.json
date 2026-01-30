@@ -1,0 +1,42 @@
+{
+  "event_detail_view": {
+    "implementation": [
+      {
+        "How_is_it_connected_to_implementation": "Handles the GET request for viewing a single event. Sets @event and @users for the view, enabling display of event details and assigned users.",
+        "change_type": "new",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "events_controller_show_action",
+        "name": "show",
+        "pseudo_code": "On GET /events/:id:\n  - Find event by id and assign to @event\n  - Fetch all users and assign to @users\n  - Render show view",
+        "type": "endpoint"
+      }
+    ],
+    "missing_implementations": [
+      "Remove button does not display a custom success message after deletion; uses generic notice.",
+      "No explicit error message handling for failed event deletion (e.g., if destroy fails).",
+      "No explicit check to prevent modification of user data from the event detail view (relies on UI, not backend enforcement)."
+    ]
+  },
+  "event_creation": {
+    "implementation": [],
+    "missing_implementations": []
+  },
+  "user_assignment_external_source": {
+    "implementation": [
+      {
+        "How_is_it_connected_to_implementation": "Fetches the list of users from the external JSONPlaceholder API. Only 'name' and 'email' are used for display and search.",
+        "change_type": "new",
+        "file_path": "app/services/jsonplaceholder_service.rb",
+        "id": "fetch_users_external_source",
+        "name": "JsonplaceholderService.fetch_users",
+        "pseudo_code": "Call GET https://jsonplaceholder.typicode.com/users\nIf response is 200, parse JSON and return array of users\nElse, return empty array\nLog errors if any occur",
+        "type": "function"
+      }
+    ],
+    "missing_implementations": [
+      "The user list must not be cached locally beyond the current session (currently cached for 5 minutes)",
+      "No explicit prevention of user assignment from sources other than the external API (relies on UI and controller logic)",
+      "No explicit check that only 'name' and 'email' are used for display/search (other fields fetched but not used)"
+    ]
+  }
+}
