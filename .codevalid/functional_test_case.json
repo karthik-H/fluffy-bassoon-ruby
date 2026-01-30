@@ -4,102 +4,377 @@
       "implementation_id": "fetch_users_external_source",
       "test_cases": [
         {
-          "description": "Test that fetch_users returns an array of user objects with only 'name' and 'email' fields when the external API responds with 200 and valid user data.",
-          "id": "fetch_users_successful_response",
+          "description": "Fetch users successfully when the external API returns status 200 with valid user data.",
+          "id": "TC_001_fetch_users_success",
           "implementation_id": "fetch_users_external_source",
-          "name": "Fetch users with successful 200 response",
+          "name": "fetch_users_success",
           "test_setup": {
-            "given": "The JSONPlaceholder API endpoint returns HTTP 200 with a JSON array of user objects, each containing at least 'name' and 'email' fields.",
-            "then": "An array of users is returned, each containing 'name' and 'email'.",
+            "given": "External API endpoint returns HTTP 200 with a valid JSON array of user objects, each containing 'name' and 'email'.",
+            "then": "Returns an array of user objects with their 'name' and 'email' fields.",
             "when": "JsonplaceholderService.fetch_users is called"
           },
           "type": "positive"
         },
         {
-          "description": "Test that fetch_users returns an empty array when the external API responds with a non-200 HTTP status (e.g., 404).",
-          "id": "fetch_users_non_200_response",
+          "description": "Handles non-200 HTTP response by returning an empty array.",
+          "id": "TC_002_fetch_users_non_200_response",
           "implementation_id": "fetch_users_external_source",
-          "name": "Fetch users with non-200 response code",
+          "name": "fetch_users_non_200_response",
           "test_setup": {
-            "given": "The JSONPlaceholder API endpoint returns HTTP 404 with an empty body.",
-            "then": "An empty array is returned.",
+            "given": "External API endpoint returns HTTP 500 error.",
+            "then": "Returns an empty array.",
             "when": "JsonplaceholderService.fetch_users is called"
           },
           "type": "negative"
         },
         {
-          "description": "Test that fetch_users returns an empty array and logs an error when a network error (e.g., timeout, connection refused) occurs.",
-          "id": "fetch_users_network_error",
+          "description": "Handles network errors gracefully and logs the error.",
+          "id": "TC_003_fetch_users_network_error",
           "implementation_id": "fetch_users_external_source",
-          "name": "Fetch users with network error",
+          "name": "fetch_users_network_error",
           "test_setup": {
-            "given": "A network error occurs during the HTTP GET request to the JSONPlaceholder API.",
-            "then": "An empty array is returned and an error is logged.",
+            "given": "External API endpoint is unreachable due to a network error (e.g., timeout, DNS failure).",
+            "then": "Returns an empty array and logs the error.",
             "when": "JsonplaceholderService.fetch_users is called"
           },
           "type": "negative"
         },
         {
-          "description": "Test that fetch_users returns an empty array and logs an error when the API responds with HTTP 200 but invalid JSON.",
-          "id": "fetch_users_invalid_json",
+          "description": "Handles invalid JSON response and logs the error.",
+          "id": "TC_004_fetch_users_invalid_json",
           "implementation_id": "fetch_users_external_source",
-          "name": "Fetch users with invalid JSON response",
+          "name": "fetch_users_invalid_json",
           "test_setup": {
-            "given": "The JSONPlaceholder API endpoint returns HTTP 200, but the response body is not valid JSON.",
-            "then": "An empty array is returned and an error is logged.",
+            "given": "External API endpoint returns HTTP 200 with an invalid JSON body.",
+            "then": "Returns an empty array and logs the error.",
+            "when": "JsonplaceholderService.fetch_users is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Handles valid HTTP 200 response with an empty array.",
+          "id": "TC_005_fetch_users_empty_array_response",
+          "implementation_id": "fetch_users_external_source",
+          "name": "fetch_users_empty_array_response",
+          "test_setup": {
+            "given": "External API endpoint returns HTTP 200 with an empty JSON array [] as the response body.",
+            "then": "Returns an empty array.",
             "when": "JsonplaceholderService.fetch_users is called"
           },
           "type": "edge"
         },
         {
-          "description": "Test that fetch_users returns an empty array when the API responds with HTTP 200 and an empty array.",
-          "id": "fetch_users_empty_array_response",
+          "description": "Handles user objects missing 'name' or 'email' fields.",
+          "id": "TC_006_fetch_users_missing_fields_in_users",
           "implementation_id": "fetch_users_external_source",
-          "name": "Fetch users with empty array response",
+          "name": "fetch_users_missing_fields_in_users",
           "test_setup": {
-            "given": "The JSONPlaceholder API endpoint returns HTTP 200 with an empty JSON array as the response body.",
-            "then": "An empty array is returned.",
+            "given": "External API endpoint returns HTTP 200 with user objects, some of which are missing 'name' or 'email'.",
+            "then": "Returns the array including objects with missing fields as-is (assuming no validation is performed).",
             "when": "JsonplaceholderService.fetch_users is called"
           },
           "type": "edge"
         },
         {
-          "description": "Test that fetch_users includes users with missing 'name' or 'email' as null or omits those users, based on implementation, when the API responds with user objects missing these fields.",
-          "id": "fetch_users_missing_name_or_email",
+          "description": "Handles user objects with 'name' or 'email' fields explicitly set to null.",
+          "id": "TC_007_fetch_users_fields_with_null_values",
           "implementation_id": "fetch_users_external_source",
-          "name": "Fetch users with missing 'name' or 'email' fields",
+          "name": "fetch_users_fields_with_null_values",
           "test_setup": {
-            "given": "The JSONPlaceholder API returns HTTP 200 with a JSON array containing some user objects missing 'name' or 'email' fields.",
-            "then": "Returned array reflects whether users with missing fields are included with nulls or omitted.",
+            "given": "External API endpoint returns HTTP 200 with user objects where 'name' or 'email' is null.",
+            "then": "Returns the array including objects with null values for 'name' or 'email'.",
             "when": "JsonplaceholderService.fetch_users is called"
           },
           "type": "edge"
         },
         {
-          "description": "Test that fetch_users returns an empty array if the API responds with HTTP 200 but an empty (not even an array) response body.",
-          "id": "fetch_users_empty_response_body",
+          "description": "Handles valid JSON response that is not an array (e.g., an object or string).",
+          "id": "TC_008_fetch_users_api_returns_non_array_json",
           "implementation_id": "fetch_users_external_source",
-          "name": "Fetch users with HTTP 200 and empty response body",
+          "name": "fetch_users_api_returns_non_array_json",
           "test_setup": {
-            "given": "The JSONPlaceholder API endpoint returns HTTP 200 with an empty string as the response body.",
-            "then": "An empty array is returned and an error may be logged.",
+            "given": "External API endpoint returns HTTP 200 with a JSON object instead of an array.",
+            "then": "Returns an empty array and logs the error.",
             "when": "JsonplaceholderService.fetch_users is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Ensures that fresh data is fetched each time, and no caching occurs.",
+          "id": "TC_009_fetch_users_cache_violation",
+          "implementation_id": "fetch_users_external_source",
+          "name": "fetch_users_cache_violation",
+          "test_setup": {
+            "given": "Multiple calls to JsonplaceholderService.fetch_users are made in succession.",
+            "then": "Each call fetches new data from the external API (no cache is used).",
+            "when": "The function is called repeatedly within 5 minutes."
           },
           "type": "edge"
         }
       ]
     }
   ],
-  "component": [],
+  "component": [
+    {
+      "implementation_id": "nav_new_event_link",
+      "test_cases": [
+        {
+          "description": "Verify that the 'New Event' navigation link is visible in the navigation bar on any page of the application.",
+          "id": "tc_001_render_link_any_page",
+          "implementation_id": "nav_new_event_link",
+          "name": "Render 'New Event' Link on Any Page",
+          "test_setup": {
+            "given": "User is logged in and navigates to any page within the application.",
+            "then": "The 'New Event' link is displayed in the navigation bar.",
+            "when": "The page loads."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Ensure that clicking the 'New Event' link redirects the user to the event creation form (/events/new).",
+          "id": "tc_002_link_redirect_to_form",
+          "implementation_id": "nav_new_event_link",
+          "name": "Click 'New Event' Link Redirects to Event Creation Form",
+          "test_setup": {
+            "given": "User is on any page and the 'New Event' link is visible.",
+            "then": "User is redirected to /events/new and the event creation form is displayed.",
+            "when": "User clicks the 'New Event' link."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Verify that the 'New Event' link is not visible in the navigation bar when the user is logged out (if the feature is restricted to authenticated users).",
+          "id": "tc_003_link_not_visible_when_logged_out",
+          "implementation_id": "nav_new_event_link",
+          "name": "Link Not Visible When User is Logged Out",
+          "test_setup": {
+            "given": "User is logged out and navigates to any page.",
+            "then": "The 'New Event' link is not displayed in the navigation bar.",
+            "when": "The page loads."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Ensure that rapidly clicking the 'New Event' link multiple times does not cause multiple redirects or duplicate form renders.",
+          "id": "tc_004_multiple_clicks_handle_redirect_once",
+          "implementation_id": "nav_new_event_link",
+          "name": "Multiple Clicks on 'New Event' Link Should Only Redirect Once",
+          "test_setup": {
+            "given": "User is on any page and the 'New Event' link is visible.",
+            "then": "User is redirected to /events/new only once and only one event creation form is rendered.",
+            "when": "User clicks the 'New Event' link rapidly multiple times."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Check if the 'New Event' link is accessible via keyboard navigation (tab, enter) and has appropriate ARIA attributes for screen readers.",
+          "id": "tc_005_link_accessibility",
+          "implementation_id": "nav_new_event_link",
+          "name": "Accessibility of 'New Event' Link",
+          "test_setup": {
+            "given": "User is on any page and uses keyboard navigation.",
+            "then": "Focus is set to the link, and pressing Enter redirects to /events/new. The link has ARIA-label describing its purpose.",
+            "when": "User tabs to the 'New Event' link and presses Enter."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Verify that clicking the 'New Event' link when /events/new route is unavailable displays an appropriate error message.",
+          "id": "tc_006_link_broken_route_handling",
+          "implementation_id": "nav_new_event_link",
+          "name": "Handle Broken Route for 'New Event' Link",
+          "test_setup": {
+            "given": "User is on any page and the 'New Event' link is visible. The /events/new route is down or returns a 404.",
+            "then": "An error page or message is shown indicating the event creation form is unavailable.",
+            "when": "User clicks the 'New Event' link."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Ensure that the 'New Event' link is visible and accessible in the navigation bar when viewed on mobile devices.",
+          "id": "tc_007_link_visibility_mobile",
+          "implementation_id": "nav_new_event_link",
+          "name": "Link Visibility on Mobile Devices",
+          "test_setup": {
+            "given": "User accesses any page on a mobile device.",
+            "then": "The 'New Event' link is visible and accessible in the mobile navigation menu.",
+            "when": "Page loads and navigation is rendered."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Verify that custom or overridden navigation styles do not hide or distort the 'New Event' link.",
+          "id": "tc_008_link_visibility_with_custom_styles",
+          "implementation_id": "nav_new_event_link",
+          "name": "Link Visibility with Custom Navigation Styles",
+          "test_setup": {
+            "given": "Custom styles are applied to the navigation bar.",
+            "then": "The 'New Event' link remains visible and its appearance is not distorted.",
+            "when": "Page loads with custom styles."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Check that redirecting to /events/new does not unintentionally lose unsaved data or navigation state from the previous page.",
+          "id": "tc_009_link_redirect_preserves_state",
+          "implementation_id": "nav_new_event_link",
+          "name": "Redirect to Event Creation Form Preserves Previous Page State",
+          "test_setup": {
+            "given": "User has unsaved data or navigation state on a page.",
+            "then": "The application prompts the user to confirm navigation if unsaved data exists, or preserves navigation state as appropriate.",
+            "when": "User clicks the 'New Event' link and is redirected."
+          },
+          "type": "edge"
+        }
+      ]
+    },
+    {
+      "implementation_id": "event_list_remove_button",
+      "test_cases": [
+        {
+          "description": "Ensure that the 'Remove' button is rendered for every event in the list.",
+          "id": "tc_remove_button_rendering",
+          "implementation_id": "event_list_remove_button",
+          "name": "Remove Button Rendering for Each Event",
+          "test_setup": {
+            "given": "Event list contains multiple events.",
+            "then": "Each event displays a 'Remove' button.",
+            "when": "Component is rendered."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Verify that clicking the 'Remove' button triggers the confirmation prompt with the exact text 'Are you sure?'.",
+          "id": "tc_remove_button_confirmation_prompt",
+          "implementation_id": "event_list_remove_button",
+          "name": "Confirmation Prompt on Remove Button Click",
+          "test_setup": {
+            "given": "Event list contains at least one event.",
+            "then": "A confirmation prompt appears with text 'Are you sure?'.",
+            "when": "User clicks the 'Remove' button for an event."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Check that confirming the removal deletes the event by sending a DELETE request.",
+          "id": "tc_remove_button_confirm_delete",
+          "implementation_id": "event_list_remove_button",
+          "name": "Delete Event on Confirmation",
+          "test_setup": {
+            "given": "Event list contains at least one event.",
+            "then": "DELETE request is sent for the event and event is removed from the list.",
+            "when": "User clicks 'Remove' and confirms the prompt."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Verify that cancelling the confirmation dialog does not delete the event nor send a DELETE request.",
+          "id": "tc_remove_button_cancel_delete",
+          "implementation_id": "event_list_remove_button",
+          "name": "Cancel Remove Does Not Delete Event",
+          "test_setup": {
+            "given": "Event list contains at least one event.",
+            "then": "No DELETE request is sent and the event remains in the list.",
+            "when": "User clicks 'Remove' and cancels the confirmation prompt."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Ensure that if there are no events in the list, no 'Remove' button is rendered.",
+          "id": "tc_remove_button_no_events",
+          "implementation_id": "event_list_remove_button",
+          "name": "No Remove Button When No Events",
+          "test_setup": {
+            "given": "Event list is empty.",
+            "then": "No 'Remove' buttons are displayed.",
+            "when": "Component is rendered."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Test that an appropriate error message or fallback is shown if the DELETE request fails.",
+          "id": "tc_remove_button_delete_failure",
+          "implementation_id": "event_list_remove_button",
+          "name": "Handle Delete Request Failure",
+          "test_setup": {
+            "given": "Event list contains at least one event.",
+            "then": "An error message or fallback UI is displayed, and the event remains in the list.",
+            "when": "User confirms removal and DELETE request fails (e.g., network error or server returns error)."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Test that multiple events can be removed one after another and the list updates accordingly.",
+          "id": "tc_remove_button_multiple_deletes",
+          "implementation_id": "event_list_remove_button",
+          "name": "Remove Multiple Events Sequentially",
+          "test_setup": {
+            "given": "Event list contains multiple events.",
+            "then": "Each event is deleted after confirmation, and the list updates after each removal.",
+            "when": "User removes events one by one by confirming the prompt each time."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Test that removing the last event results in an empty event list and no Remove buttons are visible.",
+          "id": "tc_remove_button_delete_last_event",
+          "implementation_id": "event_list_remove_button",
+          "name": "Remove Last Event from List",
+          "test_setup": {
+            "given": "Event list contains one event.",
+            "then": "Event is deleted; event list is empty and no 'Remove' button is shown.",
+            "when": "User clicks 'Remove' and confirms the prompt."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Ensure the confirmation prompt displays the exact text 'Are you sure?' as required.",
+          "id": "tc_remove_button_confirmation_text_exact",
+          "implementation_id": "event_list_remove_button",
+          "name": "Confirmation Text Is Exact",
+          "test_setup": {
+            "given": "Event list contains at least one event.",
+            "then": "Confirmation prompt text is exactly 'Are you sure?'.",
+            "when": "User clicks 'Remove' button."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Verify that double-clicking the Remove button does not cause duplicate DELETE requests.",
+          "id": "tc_remove_button_double_click",
+          "implementation_id": "event_list_remove_button",
+          "name": "Double Click Remove Button",
+          "test_setup": {
+            "given": "Event list contains at least one event.",
+            "then": "Only one DELETE request is sent and event is deleted only once.",
+            "when": "User double-clicks 'Remove' button and confirms the prompt."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Verify that the Remove button is disabled while the DELETE request is in-flight to prevent duplicate actions.",
+          "id": "tc_remove_button_button_disabled_during_delete",
+          "implementation_id": "event_list_remove_button",
+          "name": "Remove Button Disabled During Deletion",
+          "test_setup": {
+            "given": "Event list contains at least one event.",
+            "then": "Remove button for that event is disabled until the request completes.",
+            "when": "User clicks 'Remove' and confirms; DELETE request is in progress."
+          },
+          "type": "edge"
+        }
+      ]
+    }
+  ],
   "endpoint": [
     {
       "implementation_id": "events_controller_show_action",
       "test_cases": [
         {
-          "description": "Verify that the endpoint returns the correct event details and list of users for a valid event ID.",
+          "description": "Verify that the endpoint returns the event details and user list when a valid event ID is provided.",
           "id": "tc_show_event_valid_id",
           "implementation_id": "events_controller_show_action",
-          "name": "View event by valid ID",
+          "name": "Show Event with Valid ID",
           "request_body_json": {},
           "request_headers": {
             "Content-Type": "application/json"
@@ -108,58 +383,57 @@
           "request_url": "/events/1",
           "response_body_json": {
             "event": {
-              "date": "2024-09-15",
-              "description": "Company-wide annual meetup event.",
+              "date": "2024-07-15",
               "id": 1,
               "location": "Main Hall",
-              "title": "Annual Meetup"
+              "title": "Annual Conference"
             },
             "users": [
               {
-                "id": 101,
-                "name": "Alice Johnson"
+                "id": 1,
+                "name": "Alice"
               },
               {
-                "id": 102,
-                "name": "Bob Smith"
+                "id": 2,
+                "name": "Bob"
               }
             ]
           },
           "response_status_code": 200,
           "test_setup": {
-            "given": "An event with ID 1 exists and multiple users are present in the system.",
-            "then": "The response contains the event details and a list of all users.",
-            "when": "A GET request is made to /events/1."
+            "given": "An event with ID 1 exists and there are users in the system.",
+            "then": "The event details for ID 1 and a list of users are returned with status 200.",
+            "when": "A GET request is sent to /events/1."
           },
           "type": "positive"
         },
         {
-          "description": "Verify that the endpoint returns an appropriate error when the event ID does not exist.",
+          "description": "Verify that the endpoint returns a 404 status when an event with the given ID does not exist.",
           "id": "tc_show_event_nonexistent_id",
           "implementation_id": "events_controller_show_action",
-          "name": "View event with nonexistent ID",
+          "name": "Show Event with Non-existent ID",
           "request_body_json": {},
           "request_headers": {
             "Content-Type": "application/json"
           },
           "request_method": "GET",
-          "request_url": "/events/9999",
+          "request_url": "/events/99999",
           "response_body_json": {
             "error": "Event not found"
           },
           "response_status_code": 404,
           "test_setup": {
-            "given": "No event with ID 9999 exists.",
-            "then": "The response contains a 404 status and an error message.",
-            "when": "A GET request is made to /events/9999."
+            "given": "No event with ID 99999 exists.",
+            "then": "A 404 status and an error message are returned.",
+            "when": "A GET request is sent to /events/99999."
           },
           "type": "negative"
         },
         {
-          "description": "Verify that the endpoint handles requests with invalid event ID formats gracefully.",
+          "description": "Verify that the endpoint handles invalid event ID formats and returns a 400 Bad Request.",
           "id": "tc_show_event_invalid_id_format",
           "implementation_id": "events_controller_show_action",
-          "name": "View event with invalid ID format",
+          "name": "Show Event with Invalid ID Format",
           "request_body_json": {},
           "request_headers": {
             "Content-Type": "application/json"
@@ -171,17 +445,17 @@
           },
           "response_status_code": 400,
           "test_setup": {
-            "given": "No event with ID 'abc' exists and the ID format is invalid.",
-            "then": "The response contains a 400 status and an error message.",
-            "when": "A GET request is made to /events/abc."
+            "given": "The event ID provided is not a valid integer.",
+            "then": "A 400 status and an error message are returned.",
+            "when": "A GET request is sent to /events/abc."
           },
           "type": "negative"
         },
         {
-          "description": "Verify that the endpoint returns an empty users array when no users are present in the system.",
+          "description": "Verify that the endpoint returns an empty user list when there are no users in the system.",
           "id": "tc_show_event_no_users",
           "implementation_id": "events_controller_show_action",
-          "name": "View event when no users exist",
+          "name": "Show Event with No Users in System",
           "request_body_json": {},
           "request_headers": {
             "Content-Type": "application/json"
@@ -190,8 +464,7 @@
           "request_url": "/events/2",
           "response_body_json": {
             "event": {
-              "date": "2024-10-01",
-              "description": "Quarterly performance review.",
+              "date": "2024-08-01",
               "id": 2,
               "location": "Conference Room",
               "title": "Quarterly Review"
@@ -200,17 +473,39 @@
           },
           "response_status_code": 200,
           "test_setup": {
-            "given": "An event with ID 2 exists but no users are present in the system.",
-            "then": "The response contains the event details and an empty users array.",
-            "when": "A GET request is made to /events/2."
+            "given": "An event with ID 2 exists and there are no users in the system.",
+            "then": "The event details are returned with an empty users array.",
+            "when": "A GET request is sent to /events/2."
           },
           "type": "edge"
         },
         {
-          "description": "Verify that the endpoint returns an error when the event ID is zero, which is typically invalid.",
-          "id": "tc_show_event_id_zero",
+          "description": "Verify that the endpoint handles extremely large event IDs gracefully.",
+          "id": "tc_show_event_large_id",
           "implementation_id": "events_controller_show_action",
-          "name": "View event with ID zero",
+          "name": "Show Event with Extremely Large ID",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "GET",
+          "request_url": "/events/999999999999999999999",
+          "response_body_json": {
+            "error": "Event not found"
+          },
+          "response_status_code": 404,
+          "test_setup": {
+            "given": "No event with a very large ID exists.",
+            "then": "A 404 status and an error message are returned.",
+            "when": "A GET request is sent to /events/999999999999999999999."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Verify that the endpoint returns a 404 when event ID is zero, assuming IDs start from 1.",
+          "id": "tc_show_event_zero_id",
+          "implementation_id": "events_controller_show_action",
+          "name": "Show Event with Zero ID",
           "request_body_json": {},
           "request_headers": {
             "Content-Type": "application/json"
@@ -223,90 +518,63 @@
           "response_status_code": 404,
           "test_setup": {
             "given": "No event with ID 0 exists.",
-            "then": "The response contains a 404 status and an error message.",
-            "when": "A GET request is made to /events/0."
+            "then": "A 404 status and an error message are returned.",
+            "when": "A GET request is sent to /events/0."
           },
           "type": "edge"
         },
         {
-          "description": "Verify that the endpoint handles requests for extremely large event IDs gracefully.",
-          "id": "tc_show_event_large_id",
+          "description": "Verify that the endpoint returns a 400 Bad Request when a negative event ID is provided.",
+          "id": "tc_show_event_negative_id",
           "implementation_id": "events_controller_show_action",
-          "name": "View event with very large ID",
+          "name": "Show Event with Negative ID",
           "request_body_json": {},
           "request_headers": {
             "Content-Type": "application/json"
           },
           "request_method": "GET",
-          "request_url": "/events/99999999999999",
-          "response_body_json": {
-            "error": "Event not found"
-          },
-          "response_status_code": 404,
-          "test_setup": {
-            "given": "No event with a very large ID exists.",
-            "then": "The response contains a 404 status and an error message.",
-            "when": "A GET request is made to /events/99999999999999."
-          },
-          "type": "edge"
-        },
-        {
-          "description": "Verify that the endpoint still returns a valid response even if the Content-Type header is missing (since it's a GET request with no body).",
-          "id": "tc_show_event_missing_content_type_header",
-          "implementation_id": "events_controller_show_action",
-          "name": "View event without Content-Type header",
-          "request_body_json": {},
-          "request_headers": {},
-          "request_method": "GET",
-          "request_url": "/events/1",
-          "response_body_json": {
-            "event": {
-              "date": "2024-09-15",
-              "description": "Company-wide annual meetup event.",
-              "id": 1,
-              "location": "Main Hall",
-              "title": "Annual Meetup"
-            },
-            "users": [
-              {
-                "id": 101,
-                "name": "Alice Johnson"
-              },
-              {
-                "id": 102,
-                "name": "Bob Smith"
-              }
-            ]
-          },
-          "response_status_code": 200,
-          "test_setup": {
-            "given": "An event with ID 1 exists and multiple users are present in the system.",
-            "then": "The response contains the event details and a list of all users.",
-            "when": "A GET request is made to /events/1 without the Content-Type header."
-          },
-          "type": "edge"
-        },
-        {
-          "description": "Verify that the endpoint is protected against SQL injection attempts in the event ID parameter.",
-          "id": "tc_show_event_sql_injection_attempt",
-          "implementation_id": "events_controller_show_action",
-          "name": "View event with SQL injection in ID",
-          "request_body_json": {},
-          "request_headers": {
-            "Content-Type": "application/json"
-          },
-          "request_method": "GET",
-          "request_url": "/events/1;DROP TABLE users;",
+          "request_url": "/events/-1",
           "response_body_json": {
             "error": "Invalid event ID format"
           },
           "response_status_code": 400,
           "test_setup": {
-            "given": "The request contains a SQL injection attempt in the event ID.",
-            "then": "The response contains a 400 status and an error message, and the database is unaffected.",
-            "when": "A GET request is made to /events/1;DROP TABLE users;."
+            "given": "Negative event IDs are invalid.",
+            "then": "A 400 status and an error message are returned.",
+            "when": "A GET request is sent to /events/-1."
           },
-          "type": "negative"
+          "type": "edge"
+        },
+        {
+          "description": "Verify that the endpoint functions even when Content-Type header is missing for a GET request.",
+          "id": "tc_show_event_valid_id_no_header",
+          "implementation_id": "events_controller_show_action",
+          "name": "Show Event with Valid ID and Missing Content-Type",
+          "request_body_json": {},
+          "request_headers": {},
+          "request_method": "GET",
+          "request_url": "/events/3",
+          "response_body_json": {
+            "event": {
+              "date": "2024-09-20",
+              "id": 3,
+              "location": "Outdoor Park",
+              "title": "Team Building"
+            },
+            "users": [
+              {
+                "id": 1,
+                "name": "Alice"
+              }
+            ]
+          },
+          "response_status_code": 200,
+          "test_setup": {
+            "given": "An event with ID 3 exists.",
+            "then": "The event details and user list are returned with status 200.",
+            "when": "A GET request is sent to /events/3 without Content-Type header."
+          },
+          "type": "edge"
         }
       ]
     }
