@@ -1,0 +1,143 @@
+{
+  "task_5124983147_20260211210101": {
+    "implementation": [
+      {
+        "How_is_it_connected_to_implementation": "Provides the navigation header, breadcrumbs for page context, and displays feedback messages (notice/alert) for all event actions.",
+        "file_path": "app/views/layouts/application.html.erb",
+        "id": "component_application_layout_navigation_breadcrumbs_flash",
+        "name": "application.html.erb (Navigation, Breadcrumbs, Flash Messaging)",
+        "pseudo_code": "Render navigation header with links to Home, All Events, and New Event\nRender breadcrumbs based on current path:\n  IF on Home: show Home\n  IF on Events index: show Home > Events\n  IF on New Event: show Home > Events > New Event\n  IF on Edit Event: show Home > Events > [Event Title] > Edit\n  IF on Show Event: show Home > Events > [Event Title]\nDisplay notice and alert messages if present\nRender the main content",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Displays a list of all events, each with title, description, assigned user count, and actions for view, edit, and remove. Provides navigation to add a new event.",
+        "file_path": "app/views/events/index.html.erb",
+        "id": "component_events_index_listing",
+        "name": "index.html.erb (Event Listing)",
+        "pseudo_code": "FOR each event in @events:\n  Display event title, description, and assigned user count\n  Provide buttons for View, Edit, and Remove (with confirmation)\nIF no events exist:\n  Show message to add the first event",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles GET /events, loads all events ordered by creation date for listing.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "endpoint_events_index",
+        "name": "EventsController#index",
+        "pseudo_code": "Fetch all events ordered by created_at descending\nAssign to @events for the view",
+        "type": "endpoint"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Renders the form for creating a new event, including user assignment UI.",
+        "file_path": "app/views/events/new.html.erb",
+        "id": "component_events_new_form",
+        "name": "new.html.erb (Event Creation Page)",
+        "pseudo_code": "Render the event form partial with a new Event instance",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Reusable form for event creation and editing. Includes fields for title, description, and user assignment (with search/filter and selection count).",
+        "file_path": "app/views/events/_form.html.erb",
+        "id": "component_events_form_partial",
+        "name": "_form.html.erb (Event Form & User Assignment)",
+        "pseudo_code": "Render form fields for title and description\nRender user assignment section:\n  IF @users present:\n    FOR each user:\n      Render checkbox for assignment\n      Show user name and email\n  ELSE:\n    Show 'Loading users...'\nShow selected user count\nProvide submit and cancel buttons\nAdd JS for user search/filter and selection count",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles GET /events/new, initializes a new event and loads users for assignment.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "endpoint_events_new",
+        "name": "EventsController#new",
+        "pseudo_code": "Create new Event instance\nFetch users for assignment\nAssign to @event and @users for the form",
+        "type": "endpoint"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Fetches the list of users from an external service for assignment in event forms and details.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "function_fetch_users_for_form",
+        "name": "EventsController#fetch_users",
+        "pseudo_code": "Call JsonplaceholderService.fetch_users\nAssign result to @users",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Fetches the user list from an external API, used for user assignment in events.",
+        "file_path": "app/services/jsonplaceholder_service.rb",
+        "id": "service_fetch_users_external",
+        "name": "JsonplaceholderService.fetch_users",
+        "pseudo_code": "IF users are cached:\n  Return cached users\nELSE:\n  Make HTTP GET request to external /users endpoint\n  Parse and return user list\n  Cache result",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles POST /events, creates a new event with assigned users, redirects with feedback messaging.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "endpoint_events_create",
+        "name": "EventsController#create",
+        "pseudo_code": "Build new Event from form params\nIF event saves successfully:\n  Redirect to event detail with notice\nELSE:\n  Reload users\n  Render form with errors",
+        "type": "endpoint"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Permits and processes assigned_user_ids from the form, ensuring correct format for saving.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "function_event_params_assignment",
+        "name": "EventsController#event_params",
+        "pseudo_code": "Permit title, description, assigned_user_ids from params\nIF assigned_user_ids present:\n  Remove blanks and convert to integers\nELSE:\n  Set assigned_user_ids to empty array",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Displays event details, including assigned users (with names and avatars), and provides navigation for editing or removing the event.",
+        "file_path": "app/views/events/show.html.erb",
+        "id": "component_events_show_detail",
+        "name": "show.html.erb (Event Detail View)",
+        "pseudo_code": "Display event title and description\nIF assigned users exist:\n  FOR each assigned user:\n    Show user name and avatar\nELSE:\n  Show 'No users assigned' message\nProvide Edit and Remove buttons",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Returns the list of user objects assigned to the event by fetching user details from the external service.",
+        "file_path": "app/models/event.rb",
+        "id": "function_assigned_users_detail",
+        "name": "Event#assigned_users",
+        "pseudo_code": "IF assigned_user_ids is blank:\n  Return empty array\nFOR each id in assigned_user_ids:\n  Fetch user from external service\nReturn list of user objects",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Fetches a single user's details from the external API, used for displaying assigned users in event details.",
+        "file_path": "app/services/jsonplaceholder_service.rb",
+        "id": "service_fetch_user_external",
+        "name": "JsonplaceholderService.fetch_user",
+        "pseudo_code": "IF user is cached:\n  Return cached user\nELSE:\n  Make HTTP GET request to external /users/:id endpoint\n  Parse and return user\n  Cache result",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles GET /events/:id/edit, loads the event and users for editing and assignment.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "endpoint_events_edit",
+        "name": "EventsController#edit",
+        "pseudo_code": "Find event by id\nFetch users for assignment\nAssign to @event and @users for the form",
+        "type": "endpoint"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Renders the form for editing an event, including user assignment UI.",
+        "file_path": "app/views/events/edit.html.erb",
+        "id": "component_events_edit_form",
+        "name": "edit.html.erb (Event Edit Page)",
+        "pseudo_code": "Render the event form partial with the existing Event instance",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles PATCH/PUT /events/:id, updates the event and assigned users, redirects with feedback messaging.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "endpoint_events_update",
+        "name": "EventsController#update",
+        "pseudo_code": "Update event with form params\nIF update succeeds:\n  Redirect to event detail with notice\nELSE:\n  Reload users\n  Render edit form with errors",
+        "type": "endpoint"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles DELETE /events/:id, removes the event, redirects to event list with feedback messaging.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "endpoint_events_destroy",
+        "name": "EventsController#destroy",
+        "pseudo_code": "Destroy the event\nRedirect to events list with notice",
+        "type": "endpoint"
+      }
+    ],
+    "missing_implementations": []
+  }
+}
