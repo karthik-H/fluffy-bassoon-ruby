@@ -536,7 +536,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/view_events_form.py"
     }
   ],
   "endpoint": [
