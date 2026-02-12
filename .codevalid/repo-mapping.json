@@ -106,7 +106,7 @@
         "file_path": "app/views/events/_form.html.erb",
         "id": "component_events_form",
         "name": "Event Form UI (New/Edit)",
-        "pseudo_code": "Render form fields: title, description\nRender user assignment section:\n  IF @users present:\n    FOR each user:\n      Show checkbox for assignment\n  ELSE:\n    Show 'Loading users...'\nShow submit and cancel buttons\nShow selected users count\nEnable user search and filtering",
+        "pseudo_code": "Render form fields: title, description\nRender user assignment section:\n  IF @users present:\n    FOR each user:\n      Show checkbox for assignment\n      Show user name and email\n  ELSE:\n    Show 'Loading users...'\nShow submit and cancel buttons\nShow selected users count\nEnable user search and filtering",
         "type": "component"
       },
       {
@@ -179,6 +179,42 @@
         "id": "service_jsonplaceholder_fetch_users",
         "name": "JsonplaceholderService.fetch_users",
         "pseudo_code": "IF cache expired:\n  GET https://jsonplaceholder.typicode.com/users\n  IF response 200:\n    Return parsed user list\n  ELSE:\n    Return []\nELSE:\n  Return cached user list",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles reading assigned user IDs from the event model, parsing JSON and ensuring an array is returned.",
+        "change_type": "new",
+        "file_path": "app/models/event.rb",
+        "id": "function_event_assigned_user_ids",
+        "name": "Event#assigned_user_ids",
+        "pseudo_code": "Read assigned_user_ids attribute\nIF blank:\n  Return []\nELSE:\n  Parse JSON and return array",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles writing assigned user IDs to the event model, storing as JSON.",
+        "change_type": "new",
+        "file_path": "app/models/event.rb",
+        "id": "function_event_assigned_user_ids_setter",
+        "name": "Event#assigned_user_ids=",
+        "pseudo_code": "IF value is Array:\n  Convert to JSON\nWrite to assigned_user_ids attribute",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Returns user objects for all assigned user IDs by fetching from the external service.",
+        "change_type": "new",
+        "file_path": "app/models/event.rb",
+        "id": "function_event_assigned_users",
+        "name": "Event#assigned_users",
+        "pseudo_code": "IF assigned_user_ids blank:\n  Return []\nELSE:\n  FOR each id in assigned_user_ids:\n    Fetch user from JsonplaceholderService\n  Return non-nil users",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Returns the count of assigned users for the event.",
+        "change_type": "new",
+        "file_path": "app/models/event.rb",
+        "id": "function_event_assigned_user_count",
+        "name": "Event#assigned_user_count",
+        "pseudo_code": "Return size of assigned_user_ids array or 0",
         "type": "function"
       }
     ],
