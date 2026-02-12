@@ -369,230 +369,170 @@
       "implementation_id": "view_events_form",
       "test_cases": [
         {
-          "description": "Verify that the title and description fields are rendered correctly.",
-          "id": "tc_render_form_fields",
+          "description": "Ensure that the title and description fields, user assignment checkboxes, user search box, selected user count, and submit button render correctly.",
+          "id": "form_fields_rendering",
           "implementation_id": "view_events_form",
-          "name": "Render Form Fields",
+          "name": "Render all form fields",
           "test_setup": {
-            "given": "Component loaded with empty event data and user list (@users)",
-            "then": "Title and description input fields should be visible and empty",
-            "when": "Component is rendered"
+            "given": "The form is rendered with @users containing ['Alice', 'Bob'] and no errors.",
+            "then": "Title and description fields, user checkboxes for Alice and Bob, user search box, selected user count (0), and submit button are visible.",
+            "when": "The component is mounted."
           },
           "type": "positive"
         },
         {
-          "description": "Verify that user assignment checkboxes are rendered for each user in the @users prop.",
-          "id": "tc_render_user_assignment_checkboxes",
+          "description": "Typing in the user search box should filter the displayed user checkboxes client-side.",
+          "id": "user_search_filtering",
           "implementation_id": "view_events_form",
-          "name": "Render User Assignment Checkboxes",
+          "name": "User search filters user list",
           "test_setup": {
-            "given": "@users contains 3 users with ids [1,2,3]",
-            "then": "3 checkboxes should be rendered, each corresponding to a user",
-            "when": "Component is rendered"
+            "given": "The form has @users: ['Alice', 'Bob', 'Charlie'].",
+            "then": "Only the checkbox for 'Alice' is visible; 'Bob' and 'Charlie' are hidden.",
+            "when": "The user enters 'Al' in the user search box."
           },
           "type": "positive"
         },
         {
-          "description": "Verify that the user search box is visible.",
-          "id": "tc_user_search_box_renders",
+          "description": "Selecting and deselecting user checkboxes updates the selected user count client-side.",
+          "id": "selected_user_count_updates",
           "implementation_id": "view_events_form",
-          "name": "User Search Box Renders",
+          "name": "Selected user count updates on checkbox change",
           "test_setup": {
-            "given": "Component loaded with @users",
-            "then": "User search box input should be visible",
-            "when": "Component is rendered"
+            "given": "The form is rendered with @users: ['Alice', 'Bob', 'Charlie'], and no users are selected.",
+            "then": "Selected user count displays '2'.",
+            "when": "The user checks 'Alice' and 'Bob' checkboxes."
           },
           "type": "positive"
         },
         {
-          "description": "Verify that typing in the user search box filters the displayed users.",
-          "id": "tc_user_search_box_filters_users",
+          "description": "Submitting the form with valid title, description, and assigned users sends event data and assigned_user_ids.",
+          "id": "form_submission_success",
           "implementation_id": "view_events_form",
-          "name": "User Search Box Filters Users",
+          "name": "Successful form submission with valid data",
           "test_setup": {
-            "given": "@users contains Alice, Bob, Carol",
-            "then": "Only the checkbox for user 'Bob' should be visible",
-            "when": "User types 'Bob' in user search box"
+            "given": "Title and description are filled, and two users are checked.",
+            "then": "A POST request is sent with event data and assigned_user_ids for the selected users.",
+            "when": "The user clicks submit."
           },
           "type": "positive"
         },
         {
-          "description": "Verify that the selected user count updates as users are checked or unchecked.",
-          "id": "tc_selected_user_count_updates",
+          "description": "If the backend returns validation errors, they are displayed at the top of the form.",
+          "id": "form_validation_error_display",
           "implementation_id": "view_events_form",
-          "name": "Selected User Count Updates",
+          "name": "Display validation errors from backend",
           "test_setup": {
-            "given": "@users contains Alice, Bob, Carol; none selected",
-            "then": "Selected user count displays '2'",
-            "when": "User checks Alice and Bob"
-          },
-          "type": "positive"
-        },
-        {
-          "description": "Verify that submitting the form with valid title, description, and assigned users sends event data and assigned_user_ids.",
-          "id": "tc_submit_form_with_valid_data",
-          "implementation_id": "view_events_form",
-          "name": "Submit Form With Valid Data",
-          "test_setup": {
-            "given": "Form filled with title='Event', description='Desc', Alice and Bob checked",
-            "then": "Event data and assigned_user_ids for Alice and Bob are sent to the backend",
-            "when": "User clicks submit"
-          },
-          "type": "positive"
-        },
-        {
-          "description": "Verify validation error display when title is missing.",
-          "id": "tc_show_validation_errors_missing_title",
-          "implementation_id": "view_events_form",
-          "name": "Show Validation Errors - Missing Title",
-          "test_setup": {
-            "given": "Description filled, no title provided",
-            "then": "Validation error message 'Title is required' is displayed",
-            "when": "User submits form"
+            "given": "The form is submitted with an empty title; backend responds with 'Title can't be blank'.",
+            "then": "An error message 'Title can't be blank' is visible above the form fields.",
+            "when": "The form re-renders."
           },
           "type": "negative"
         },
         {
-          "description": "Verify validation error display when description is missing.",
-          "id": "tc_show_validation_errors_missing_description",
+          "description": "If title is empty and the user submits, the form prevents submit and displays a client-side error.",
+          "id": "client_side_empty_title_error",
           "implementation_id": "view_events_form",
-          "name": "Show Validation Errors - Missing Description",
+          "name": "Client-side error for empty title",
           "test_setup": {
-            "given": "Title filled, no description provided",
-            "then": "Validation error message 'Description is required' is displayed",
-            "when": "User submits form"
+            "given": "Title input is empty and other fields are filled.",
+            "then": "Form does not submit; error 'Title is required' is shown.",
+            "when": "The user clicks submit."
           },
           "type": "negative"
         },
         {
-          "description": "Verify validation error display when no users are assigned.",
-          "id": "tc_show_validation_errors_no_users_selected",
+          "description": "When @users is empty, user assignment UI does not display and selected user count is zero.",
+          "id": "no_users_available",
           "implementation_id": "view_events_form",
-          "name": "Show Validation Errors - No Users Selected",
+          "name": "No users available edge case",
           "test_setup": {
-            "given": "Title and description filled, no users checked",
-            "then": "Validation error message 'At least one user must be assigned' is displayed",
-            "when": "User submits form"
-          },
-          "type": "negative"
-        },
-        {
-          "description": "Verify that form can be submitted when all available users are assigned.",
-          "id": "tc_submit_form_with_max_users_selected",
-          "implementation_id": "view_events_form",
-          "name": "Submit Form With Maximum Users Selected",
-          "test_setup": {
-            "given": "@users contains 50 users, all checked",
-            "then": "Event data and assigned_user_ids for all 50 users are sent",
-            "when": "User submits form"
+            "given": "The form is rendered with @users: [].",
+            "then": "No user checkboxes are shown; search box is disabled or hidden; selected user count is 0.",
+            "when": "The component is mounted."
           },
           "type": "edge"
         },
         {
-          "description": "Verify behavior when the user search box input does not match any user.",
-          "id": "tc_search_box_no_matching_users",
+          "description": "Searching with a string not matching any users displays 'no results' or hides all checkboxes.",
+          "id": "user_search_no_results",
           "implementation_id": "view_events_form",
-          "name": "Search Box No Matching Users",
+          "name": "User search with no matches",
           "test_setup": {
-            "given": "@users contains Alice, Bob, Carol",
-            "then": "No user checkboxes are displayed",
-            "when": "User types 'Zach' in search box"
+            "given": "The form is rendered with @users: ['Alice', 'Bob'].",
+            "then": "No user checkboxes are displayed; an appropriate message (e.g., 'No users found') is shown if implemented.",
+            "when": "The user enters 'Zoe' in the search box."
           },
           "type": "edge"
         },
         {
-          "description": "Verify that multiple validation errors are displayed simultaneously.",
-          "id": "tc_error_display_multiple_validation_errors",
+          "description": "When editing an event, previously assigned users are pre-checked and selected user count reflects this.",
+          "id": "edit_event_preselect_users",
           "implementation_id": "view_events_form",
-          "name": "Error Display Multiple Validation Errors",
+          "name": "Preselect assigned users when editing",
           "test_setup": {
-            "given": "Title missing, description missing, no users checked",
-            "then": "All relevant validation error messages are displayed",
-            "when": "User submits form"
-          },
-          "type": "edge"
-        },
-        {
-          "description": "Verify that form accepts and correctly submits special characters in title and description.",
-          "id": "tc_submit_form_with_special_characters",
-          "implementation_id": "view_events_form",
-          "name": "Submit Form With Special Characters",
-          "test_setup": {
-            "given": "Title='@Event!#$', description='Desc*&^%', Alice checked",
-            "then": "Event data with special characters is sent successfully",
-            "when": "User submits form"
-          },
-          "type": "edge"
-        },
-        {
-          "description": "Verify that the form handles an empty users list gracefully.",
-          "id": "tc_render_empty_users_list",
-          "implementation_id": "view_events_form",
-          "name": "Render Empty Users List",
-          "test_setup": {
-            "given": "@users is empty",
-            "then": "No user checkboxes are displayed and selected user count is '0'",
-            "when": "Component is rendered"
-          },
-          "type": "edge"
-        },
-        {
-          "description": "Verify that unchecking all users updates the selected user count to zero.",
-          "id": "tc_uncheck_all_users",
-          "implementation_id": "view_events_form",
-          "name": "Uncheck All Users",
-          "test_setup": {
-            "given": "@users contains Alice and Bob, both checked initially",
-            "then": "Selected user count displays '0'",
-            "when": "User unchecks both Alice and Bob"
+            "given": "The event being edited has assigned_user_ids: [1, 3]; @users: [{id: 1, name: 'Alice'}, {id: 2, name: 'Bob'}, {id: 3, name: 'Charlie'}].",
+            "then": "Checkboxes for 'Alice' and 'Charlie' are checked; selected user count is 2.",
+            "when": "The form is rendered."
           },
           "type": "positive"
         },
         {
-          "description": "Verify that assigned users are pre-selected when editing an existing event.",
-          "id": "tc_preserve_assigned_users_on_edit",
+          "description": "Deselecting all user checkboxes updates the selected user count to zero.",
+          "id": "deselect_all_users",
           "implementation_id": "view_events_form",
-          "name": "Preserve Assigned Users On Edit",
+          "name": "Deselect all users sets count to zero",
           "test_setup": {
-            "given": "Component loaded with event assigned to Alice and Bob; @users contains Alice, Bob, Carol",
-            "then": "Checkboxes for Alice and Bob are checked; selected user count is '2'",
-            "when": "Component is rendered"
-          },
-          "type": "positive"
-        },
-        {
-          "description": "Verify error handling when form submission fails due to a backend error.",
-          "id": "tc_form_submit_failure_backend_error",
-          "implementation_id": "view_events_form",
-          "name": "Form Submit Failure - Backend Error",
-          "test_setup": {
-            "given": "Form filled with valid data",
-            "then": "Error message is displayed to the user",
-            "when": "User submits form and backend returns an error"
-          },
-          "type": "negative"
-        },
-        {
-          "description": "Verify that previously selected users remain checked when search is cleared.",
-          "id": "tc_user_checkbox_state_after_search_and_clear",
-          "implementation_id": "view_events_form",
-          "name": "User Checkbox State After Search And Clear",
-          "test_setup": {
-            "given": "@users contains Alice, Bob, Carol; Alice checked; search 'Bob'",
-            "then": "Checkbox for Alice remains checked; selected user count is accurate",
-            "when": "User clears the search box"
+            "given": "Three users are all checked.",
+            "then": "Selected user count updates to 0.",
+            "when": "The user unchecks all checkboxes."
           },
           "type": "edge"
         },
         {
-          "description": "Verify that user checkboxes are not duplicated after filtering/searching.",
-          "id": "tc_no_duplicate_user_checkboxes",
+          "description": "Submitting the form with no assigned users is allowed if requirement permits, and assigned_user_ids is empty.",
+          "id": "form_submission_no_users",
           "implementation_id": "view_events_form",
-          "name": "No Duplicate User Checkboxes",
+          "name": "Submit with no users assigned",
           "test_setup": {
-            "given": "@users contains Alice, Bob, Carol",
-            "then": "Only one checkbox per user is rendered",
-            "when": "User searches for 'A', then clears search"
+            "given": "Title and description are filled; no user checkboxes are checked.",
+            "then": "A POST request is sent with assigned_user_ids: [].",
+            "when": "The user submits the form."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Submitting the form with an empty title should be prevented and error shown.",
+          "id": "form_submission_no_title",
+          "implementation_id": "view_events_form",
+          "name": "Submit with missing title is prevented",
+          "test_setup": {
+            "given": "Description is filled; title is empty.",
+            "then": "No request is sent; error for missing title is displayed.",
+            "when": "User clicks submit."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Submitting the form with an empty description should be prevented and error shown.",
+          "id": "form_submission_no_description",
+          "implementation_id": "view_events_form",
+          "name": "Submit with missing description is prevented",
+          "test_setup": {
+            "given": "Title is filled; description is empty.",
+            "then": "No request is sent; error for missing description is displayed.",
+            "when": "User clicks submit."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Checkbox selections remain intact even if users are filtered out and back in via the search box.",
+          "id": "user_checkbox_persistence_after_search",
+          "implementation_id": "view_events_form",
+          "name": "Checkbox selection persists after search",
+          "test_setup": {
+            "given": "Three users; 'Alice' is checked.",
+            "then": "'Alice' remains checked and selected user count is correct.",
+            "when": "User types search 'Bo', then clears search box."
           },
           "type": "edge"
         }
