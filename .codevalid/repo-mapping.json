@@ -183,7 +183,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Handles reading assigned user IDs from the event model, parsing JSON and ensuring an array is returned.",
-        "change_type": "new",
+        "change_type": "unchanged",
         "file_path": "app/models/event.rb",
         "id": "function_event_assigned_user_ids",
         "name": "Event#assigned_user_ids",
@@ -192,7 +192,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Handles writing assigned user IDs to the event model, storing as JSON.",
-        "change_type": "new",
+        "change_type": "unchanged",
         "file_path": "app/models/event.rb",
         "id": "function_event_assigned_user_ids_setter",
         "name": "Event#assigned_user_ids=",
@@ -201,7 +201,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Returns user objects for all assigned user IDs by fetching from the external service.",
-        "change_type": "new",
+        "change_type": "unchanged",
         "file_path": "app/models/event.rb",
         "id": "function_event_assigned_users",
         "name": "Event#assigned_users",
@@ -210,7 +210,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Returns the count of assigned users for the event.",
-        "change_type": "new",
+        "change_type": "unchanged",
         "file_path": "app/models/event.rb",
         "id": "function_event_assigned_user_count",
         "name": "Event#assigned_user_count",
