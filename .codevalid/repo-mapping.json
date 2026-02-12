@@ -199,12 +199,12 @@
         "type": "function"
       },
       {
-        "How_is_it_connected_to_implementation": "Reusable form for event creation and editing, including user assignment UI, error display, and now includes a user search box and selected user count.",
+        "How_is_it_connected_to_implementation": "Reusable form for event creation and editing, including user assignment UI, error display, user search box, and selected user count. Now includes client-side filtering and count update logic.",
         "change_type": "modified",
         "file_path": "app/views/events/_form.html.erb",
         "id": "view_events_form",
         "name": "_form.html.erb",
-        "pseudo_code": "DISPLAY form fields for title, description\nDISPLAY user assignment checkboxes (loaded from @users)\nSHOW user search box to filter users\nSHOW selected user count\nSHOW validation errors if any\nON submit, send event data and assigned_user_ids",
+        "pseudo_code": "DISPLAY form fields for title, description\nDISPLAY user assignment checkboxes (loaded from @users)\nSHOW user search box to filter users (client-side JS)\nSHOW selected user count (client-side JS)\nSHOW validation errors if any\nON submit, send event data and assigned_user_ids",
         "type": "component"
       },
       {
