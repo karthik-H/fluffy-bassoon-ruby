@@ -82,7 +82,17 @@
   "task_5124983147_20260211210101": {
     "implementation": [
       {
+        "How_is_it_connected_to_implementation": "Provides the navigation header, breadcrumbs, and feedback messaging (notice/alert) for all event pages.",
+        "change_type": "unchanged",
+        "file_path": "app/views/layouts/application.html.erb",
+        "id": "layout_application",
+        "name": "application.html.erb",
+        "pseudo_code": "DISPLAY header with navigation links\nDISPLAY breadcrumbs based on current path\nIF notice or alert present\n  SHOW feedback message\nYIELD to page content",
+        "type": "component"
+      },
+      {
         "How_is_it_connected_to_implementation": "Defines RESTful routes for all event actions (listing, detail, creation, editing, removal) and connects URLs to EventsController actions.",
+        "change_type": "unchanged",
         "file_path": "config/routes.rb",
         "id": "route_events_resource",
         "name": "resources :events",
@@ -91,6 +101,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Handles event listing by fetching all events and rendering the index view.",
+        "change_type": "unchanged",
         "file_path": "app/controllers/events_controller.rb",
         "id": "controller_events_index",
         "name": "EventsController#index",
@@ -99,6 +110,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Displays the list of events, links to event detail, edit, and remove actions, and provides navigation to create a new event.",
+        "change_type": "unchanged",
         "file_path": "app/views/events/index.html.erb",
         "id": "view_events_index",
         "name": "index.html.erb",
@@ -106,23 +118,8 @@
         "type": "component"
       },
       {
-        "How_is_it_connected_to_implementation": "Handles displaying the detail view for a single event.",
-        "file_path": "app/controllers/events_controller.rb",
-        "id": "controller_events_show",
-        "name": "EventsController#show",
-        "pseudo_code": "FIND event by id\nFETCH users for assignment display\nRENDER show view",
-        "type": "function"
-      },
-      {
-        "How_is_it_connected_to_implementation": "Displays event details, assigned users, and provides actions for editing and removing the event.",
-        "file_path": "app/views/events/show.html.erb",
-        "id": "view_events_show",
-        "name": "show.html.erb",
-        "pseudo_code": "DISPLAY event title and description\nIF assigned users exist\n  FOR each assigned user\n    SHOW user badge\nELSE\n  SHOW 'No users assigned'\nSHOW Edit, Back, and Remove buttons",
-        "type": "component"
-      },
-      {
         "How_is_it_connected_to_implementation": "Prepares a new event instance and fetches users for assignment, rendering the new event form.",
+        "change_type": "unchanged",
         "file_path": "app/controllers/events_controller.rb",
         "id": "controller_events_new",
         "name": "EventsController#new",
@@ -131,6 +128,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Renders the event creation form partial.",
+        "change_type": "unchanged",
         "file_path": "app/views/events/new.html.erb",
         "id": "view_events_new",
         "name": "new.html.erb",
@@ -139,6 +137,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Handles event creation, assigns users, and redirects with feedback messaging.",
+        "change_type": "unchanged",
         "file_path": "app/controllers/events_controller.rb",
         "id": "controller_events_create",
         "name": "EventsController#create",
@@ -147,6 +146,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Fetches the event and users for assignment, rendering the edit form.",
+        "change_type": "unchanged",
         "file_path": "app/controllers/events_controller.rb",
         "id": "controller_events_edit",
         "name": "EventsController#edit",
@@ -155,6 +155,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Renders the event editing form partial.",
+        "change_type": "unchanged",
         "file_path": "app/views/events/edit.html.erb",
         "id": "view_events_edit",
         "name": "edit.html.erb",
@@ -163,6 +164,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Handles event updates, user assignment, and redirects with feedback messaging.",
+        "change_type": "unchanged",
         "file_path": "app/controllers/events_controller.rb",
         "id": "controller_events_update",
         "name": "EventsController#update",
@@ -170,7 +172,26 @@
         "type": "function"
       },
       {
+        "How_is_it_connected_to_implementation": "Handles displaying the detail view for a single event.",
+        "change_type": "unchanged",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "controller_events_show",
+        "name": "EventsController#show",
+        "pseudo_code": "FIND event by id\nFETCH users for assignment display\nRENDER show view",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Displays event details, assigned users, and provides actions for editing and removing the event.",
+        "change_type": "unchanged",
+        "file_path": "app/views/events/show.html.erb",
+        "id": "view_events_show",
+        "name": "show.html.erb",
+        "pseudo_code": "DISPLAY event title and description\nIF assigned users exist\n  FOR each assigned user\n    SHOW user badge\nELSE\n  SHOW 'No users assigned'\nSHOW Edit, Back, and Remove buttons",
+        "type": "component"
+      },
+      {
         "How_is_it_connected_to_implementation": "Handles event removal and redirects with feedback messaging.",
+        "change_type": "unchanged",
         "file_path": "app/controllers/events_controller.rb",
         "id": "controller_events_destroy",
         "name": "EventsController#destroy",
@@ -178,15 +199,17 @@
         "type": "function"
       },
       {
-        "How_is_it_connected_to_implementation": "Reusable form for event creation and editing, including user assignment UI and error display.",
+        "How_is_it_connected_to_implementation": "Reusable form for event creation and editing, including user assignment UI, error display, and now includes a user search box and selected user count.",
+        "change_type": "modified",
         "file_path": "app/views/events/_form.html.erb",
         "id": "view_events_form",
         "name": "_form.html.erb",
-        "pseudo_code": "DISPLAY form fields for title, description\nDISPLAY user assignment checkboxes (loaded from @users)\nSHOW validation errors if any\nON submit, send event data and assigned_user_ids",
+        "pseudo_code": "DISPLAY form fields for title, description\nDISPLAY user assignment checkboxes (loaded from @users)\nSHOW user search box to filter users\nSHOW selected user count\nSHOW validation errors if any\nON submit, send event data and assigned_user_ids",
         "type": "component"
       },
       {
         "How_is_it_connected_to_implementation": "Fetches the external user list for assignment in event forms and details.",
+        "change_type": "unchanged",
         "file_path": "app/services/jsonplaceholder_service.rb",
         "id": "service_fetch_users",
         "name": "JsonplaceholderService.fetch_users",
@@ -195,19 +218,12 @@
       },
       {
         "How_is_it_connected_to_implementation": "Loads users from the external service for use in forms and details.",
+        "change_type": "unchanged",
         "file_path": "app/controllers/events_controller.rb",
         "id": "controller_fetch_users",
         "name": "EventsController#fetch_users",
         "pseudo_code": "CALL JsonplaceholderService.fetch_users\nSET @users for views",
         "type": "function"
-      },
-      {
-        "How_is_it_connected_to_implementation": "Provides the navigation header, breadcrumbs, and feedback messaging (notice/alert) for all event pages.",
-        "file_path": "app/views/layouts/application.html.erb",
-        "id": "layout_application",
-        "name": "application.html.erb",
-        "pseudo_code": "DISPLAY header with navigation links\nDISPLAY breadcrumbs based on current path\nIF notice or alert present\n  SHOW feedback message\nYIELD to page content",
-        "type": "component"
       }
     ],
     "missing_implementations": []
