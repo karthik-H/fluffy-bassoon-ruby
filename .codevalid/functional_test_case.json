@@ -129,7 +129,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/function_event_assigned_user_ids.py"
     },
     {
       "implementation_id": "function_event_assigned_user_ids_setter",
@@ -254,7 +255,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/function_event_assigned_user_ids_setter.py"
     },
     {
       "implementation_id": "function_event_assigned_users",
@@ -367,7 +369,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/function_event_assigned_users.py"
     },
     {
       "implementation_id": "function_event_assigned_user_count",
@@ -480,7 +483,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/function_event_assigned_user_count.py"
     },
     {
       "implementation_id": "controller_events_index",
@@ -581,7 +585,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_index.py"
     },
     {
       "implementation_id": "controller_events_show",
@@ -694,7 +699,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_show.py"
     },
     {
       "implementation_id": "controller_events_new",
@@ -783,7 +789,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_new.py"
     },
     {
       "implementation_id": "controller_events_edit",
@@ -884,7 +891,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_edit.py"
     },
     {
       "implementation_id": "controller_events_create",
@@ -1009,7 +1017,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_create.py"
     },
     {
       "implementation_id": "controller_events_update",
@@ -1134,7 +1143,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_update.py"
     },
     {
       "implementation_id": "controller_events_destroy",
@@ -1235,7 +1245,8 @@
           },
           "type": "positive"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_destroy.py"
     },
     {
       "implementation_id": "controller_events_set_event",
@@ -1372,7 +1383,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_set_event.py"
     },
     {
       "implementation_id": "controller_events_event_params",
@@ -1677,7 +1689,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_event_params.py"
     },
     {
       "implementation_id": "controller_events_fetch_users",
@@ -1766,7 +1779,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_fetch_users.py"
     },
     {
       "implementation_id": "service_jsonplaceholder_fetch_users",
@@ -1891,7 +1905,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/service_jsonplaceholder_fetch_users.py"
     }
   ],
   "component": [
@@ -2054,7 +2069,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/component_events_navigation_header.py"
     },
     {
       "implementation_id": "component_events_breadcrumbs",
@@ -2215,7 +2231,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/component_events_breadcrumbs.py"
     },
     {
       "implementation_id": "component_events_flash_messages",
@@ -2340,7 +2357,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/component_events_flash_messages.py"
     },
     {
       "implementation_id": "component_events_list",
@@ -2537,7 +2555,8 @@
           },
           "type": "positive"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/component_events_list.py"
     },
     {
       "implementation_id": "component_events_detail",
@@ -2722,7 +2741,8 @@
           },
           "type": "positive"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/component_events_detail.py"
     },
     {
       "implementation_id": "component_events_form_wrapper_new",
@@ -2871,7 +2891,8 @@
           },
           "type": "positive"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/component_events_form_wrapper_new.py"
     },
     {
       "implementation_id": "component_events_form_wrapper_edit",
@@ -2996,7 +3017,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/component_events_form_wrapper_edit.py"
     },
     {
       "implementation_id": "component_events_form",
@@ -3217,7 +3239,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/component_events_form.py"
     }
   ],
   "endpoint": [
@@ -3737,7 +3760,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/endpoint_events_resource.py"
     }
   ]
 }
