@@ -106,7 +106,7 @@
         "file_path": "app/views/events/_form.html.erb",
         "id": "component_events_form",
         "name": "Event Form UI (New/Edit)",
-        "pseudo_code": "Render form fields: title, description\nRender user assignment section:\n  IF @users present:\n    FOR each user:\n      Show checkbox for assignment\n  ELSE:\n    Show 'Loading users...'\nShow submit and cancel buttons",
+        "pseudo_code": "Render form fields: title, description\nRender user assignment section:\n  IF @users present:\n    FOR each user:\n      Show checkbox for assignment\n  ELSE:\n    Show 'Loading users...'\nShow submit and cancel buttons\nShow selected users count\nEnable user search and filtering",
         "type": "component"
       },
       {
