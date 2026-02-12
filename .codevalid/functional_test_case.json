@@ -1,5 +1,494 @@
 {
-  "function": [],
+  "function": [
+    {
+      "implementation_id": "function_event_assigned_user_ids",
+      "test_cases": [
+        {
+          "description": "When assigned_user_ids attribute is nil, the function should return an empty array.",
+          "id": "assigned_user_ids_blank_returns_empty_array",
+          "implementation_id": "function_event_assigned_user_ids",
+          "name": "blank_attribute_returns_empty_array",
+          "test_setup": {
+            "given": "Event instance with assigned_user_ids attribute set to nil.",
+            "then": "[]",
+            "when": "assigned_user_ids is called."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "When assigned_user_ids attribute is an empty string, the function should return an empty array.",
+          "id": "assigned_user_ids_empty_string_returns_empty_array",
+          "implementation_id": "function_event_assigned_user_ids",
+          "name": "empty_string_returns_empty_array",
+          "test_setup": {
+            "given": "Event instance with assigned_user_ids attribute set to \"\".",
+            "then": "[]",
+            "when": "assigned_user_ids is called."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "When assigned_user_ids contains valid JSON representing an array of user IDs, the function should return the parsed array.",
+          "id": "assigned_user_ids_valid_json_array",
+          "implementation_id": "function_event_assigned_user_ids",
+          "name": "valid_json_array_returns_array",
+          "test_setup": {
+            "given": "Event instance with assigned_user_ids attribute set to \"[1,2,3]\".",
+            "then": "[1,2,3]",
+            "when": "assigned_user_ids is called."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "When assigned_user_ids contains valid JSON of an empty array, the function should return an empty array.",
+          "id": "assigned_user_ids_valid_json_empty_array",
+          "implementation_id": "function_event_assigned_user_ids",
+          "name": "valid_json_empty_array_returns_empty_array",
+          "test_setup": {
+            "given": "Event instance with assigned_user_ids attribute set to \"[]\".",
+            "then": "[]",
+            "when": "assigned_user_ids is called."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "When assigned_user_ids contains valid JSON array of string user IDs, the function should return the parsed array of strings.",
+          "id": "assigned_user_ids_valid_json_string_ids",
+          "implementation_id": "function_event_assigned_user_ids",
+          "name": "valid_json_string_ids",
+          "test_setup": {
+            "given": "Event instance with assigned_user_ids attribute set to \"[\\\"user1\\\", \\\"user2\\\"]\".",
+            "then": "[\"user1\", \"user2\"]",
+            "when": "assigned_user_ids is called."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "When assigned_user_ids contains invalid JSON, the function should handle the error gracefully and return an empty array or raise an error based on implementation.",
+          "id": "assigned_user_ids_invalid_json_returns_empty_array_or_error",
+          "implementation_id": "function_event_assigned_user_ids",
+          "name": "invalid_json_returns_empty_array_or_error",
+          "test_setup": {
+            "given": "Event instance with assigned_user_ids attribute set to \"not a json\".",
+            "then": "[] or Exception (depending on implementation)",
+            "when": "assigned_user_ids is called."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "When assigned_user_ids contains valid JSON but of an object instead of an array, the function should handle this gracefully.",
+          "id": "assigned_user_ids_json_object_instead_of_array",
+          "implementation_id": "function_event_assigned_user_ids",
+          "name": "json_object_instead_of_array",
+          "test_setup": {
+            "given": "Event instance with assigned_user_ids attribute set to \"{\\\"a\\\":1}\".",
+            "then": "[] or Exception (depending on implementation)",
+            "when": "assigned_user_ids is called."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "When assigned_user_ids attribute is a string with only whitespace, the function should return an empty array.",
+          "id": "assigned_user_ids_whitespace_string_returns_empty_array",
+          "implementation_id": "function_event_assigned_user_ids",
+          "name": "whitespace_string_returns_empty_array",
+          "test_setup": {
+            "given": "Event instance with assigned_user_ids attribute set to \"   \".",
+            "then": "[]",
+            "when": "assigned_user_ids is called."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "When assigned_user_ids contains a large JSON array, the function should return the full array.",
+          "id": "assigned_user_ids_large_array",
+          "implementation_id": "function_event_assigned_user_ids",
+          "name": "large_array_returns_array",
+          "test_setup": {
+            "given": "Event instance with assigned_user_ids attribute set to a JSON array of 1000 integers (\"[1,2,3,...,1000]\").",
+            "then": "[1,2,3,...,1000]",
+            "when": "assigned_user_ids is called."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "When assigned_user_ids is a non-JSON, non-blank string (e.g., 'hello'), function should return empty array or handle error.",
+          "id": "assigned_user_ids_non_json_non_blank_string",
+          "implementation_id": "function_event_assigned_user_ids",
+          "name": "non_json_non_blank_string_returns_empty_array",
+          "test_setup": {
+            "given": "Event instance with assigned_user_ids attribute set to \"hello\".",
+            "then": "[] or Exception (depending on implementation)",
+            "when": "assigned_user_ids is called."
+          },
+          "type": "negative"
+        }
+      ]
+    },
+    {
+      "implementation_id": "function_event_assigned_user_ids_setter",
+      "test_cases": [
+        {
+          "description": "Assigns a valid array of user IDs and ensures it is stored as JSON.",
+          "id": "TC1_assign_valid_array_of_user_ids",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_valid_array_of_user_ids",
+          "test_setup": {
+            "given": "assigned_user_ids is set to [1, 2, 3]",
+            "then": "assigned_user_ids attribute is set to '[1,2,3]' (JSON string)",
+            "when": "Event#assigned_user_ids=([1,2,3]) is called"
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Assigns an empty array and checks if it is stored as an empty JSON array.",
+          "id": "TC2_assign_empty_array",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_empty_array",
+          "test_setup": {
+            "given": "assigned_user_ids is set to []",
+            "then": "assigned_user_ids attribute is set to '[]'",
+            "when": "Event#assigned_user_ids=([]) is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Assigns a single-element array and checks if it is stored as a single-element JSON array.",
+          "id": "TC3_assign_single_element_array",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_single_element_array",
+          "test_setup": {
+            "given": "assigned_user_ids is set to [42]",
+            "then": "assigned_user_ids attribute is set to '[42]'",
+            "when": "Event#assigned_user_ids=([42]) is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Assigns an array with duplicate IDs and checks if they are preserved in JSON.",
+          "id": "TC4_assign_array_with_duplicate_user_ids",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_array_with_duplicate_user_ids",
+          "test_setup": {
+            "given": "assigned_user_ids is set to [1, 2, 2, 3]",
+            "then": "assigned_user_ids attribute is set to '[1,2,2,3]'",
+            "when": "Event#assigned_user_ids=([1,2,2,3]) is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Assigns an array containing non-integer values and verifies they are stored as is in JSON.",
+          "id": "TC5_assign_array_with_non_integer_values",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_array_with_non_integer_values",
+          "test_setup": {
+            "given": "assigned_user_ids is set to [1, 'a', null, 5.5]",
+            "then": "assigned_user_ids attribute is set to '[1,\"a\",null,5.5]'",
+            "when": "Event#assigned_user_ids=([1, 'a', null, 5.5]) is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Assigns nil to assigned_user_ids and checks the attribute's value.",
+          "id": "TC6_assign_nil_value",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_nil_value",
+          "test_setup": {
+            "given": "assigned_user_ids is set to null",
+            "then": "assigned_user_ids attribute is set to null",
+            "when": "Event#assigned_user_ids=(null) is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Assigns a string instead of an array and checks that the value is stored as-is.",
+          "id": "TC7_assign_string_value",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_string_value",
+          "test_setup": {
+            "given": "assigned_user_ids is set to '123'",
+            "then": "assigned_user_ids attribute is set to '123'",
+            "when": "Event#assigned_user_ids=('123') is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Assigns an integer instead of an array and checks the attribute.",
+          "id": "TC8_assign_integer_value",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_integer_value",
+          "test_setup": {
+            "given": "assigned_user_ids is set to 123",
+            "then": "assigned_user_ids attribute is set to 123",
+            "when": "Event#assigned_user_ids=(123) is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Assigns a hash value instead of an array and checks the attribute.",
+          "id": "TC9_assign_hash_value",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_hash_value",
+          "test_setup": {
+            "given": "assigned_user_ids is set to {foo: 'bar'}",
+            "then": "assigned_user_ids attribute is set to {foo: 'bar'}",
+            "when": "Event#assigned_user_ids=({foo: 'bar'}) is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Assigns a very large array to test the function's handling of large inputs.",
+          "id": "TC10_assign_large_array",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_large_array",
+          "test_setup": {
+            "given": "assigned_user_ids is set to an array of 10,000 integers",
+            "then": "assigned_user_ids attribute is set to a JSON string representing the same 10,000 integers",
+            "when": "Event#assigned_user_ids=([1,2,...,10000]) is called"
+          },
+          "type": "edge"
+        }
+      ]
+    },
+    {
+      "implementation_id": "function_event_assigned_users",
+      "test_cases": [
+        {
+          "description": "When assigned_user_ids is nil, the function should return an empty array.",
+          "id": "tc_assigned_users_blank_nil",
+          "implementation_id": "function_event_assigned_users",
+          "name": "assigned_user_ids is nil",
+          "test_setup": {
+            "given": "assigned_user_ids is nil on the Event instance",
+            "then": "Returns []",
+            "when": "Event#assigned_users is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "When assigned_user_ids is an empty array, the function should return an empty array.",
+          "id": "tc_assigned_users_blank_empty_array",
+          "implementation_id": "function_event_assigned_users",
+          "name": "assigned_user_ids is empty array",
+          "test_setup": {
+            "given": "assigned_user_ids is [] on the Event instance",
+            "then": "Returns []",
+            "when": "Event#assigned_users is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "When assigned_user_ids contains one valid user ID, the function should return an array with the corresponding user object.",
+          "id": "tc_assigned_users_single_valid",
+          "implementation_id": "function_event_assigned_users",
+          "name": "assigned_user_ids has one valid ID",
+          "test_setup": {
+            "given": "assigned_user_ids is [1] on the Event instance and JsonplaceholderService returns a valid user for ID 1",
+            "then": "Returns [user_object_for_id_1]",
+            "when": "Event#assigned_users is called"
+          },
+          "type": "positive"
+        },
+        {
+          "description": "When assigned_user_ids contains multiple valid user IDs, the function should return an array of user objects for each valid ID.",
+          "id": "tc_assigned_users_multiple_valid",
+          "implementation_id": "function_event_assigned_users",
+          "name": "assigned_user_ids has multiple valid IDs",
+          "test_setup": {
+            "given": "assigned_user_ids is [1, 2, 3] on the Event instance and JsonplaceholderService returns valid users for each ID",
+            "then": "Returns [user_object_for_id_1, user_object_for_id_2, user_object_for_id_3]",
+            "when": "Event#assigned_users is called"
+          },
+          "type": "positive"
+        },
+        {
+          "description": "When assigned_user_ids contains both valid and invalid IDs, the function should return only the found user objects, omitting nil values.",
+          "id": "tc_assigned_users_some_invalid_ids",
+          "implementation_id": "function_event_assigned_users",
+          "name": "assigned_user_ids has some invalid IDs",
+          "test_setup": {
+            "given": "assigned_user_ids is [1, 999] on the Event instance and JsonplaceholderService returns a user for ID 1 but nil for 999",
+            "then": "Returns [user_object_for_id_1]",
+            "when": "Event#assigned_users is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "When assigned_user_ids contains only invalid IDs, the function should return an empty array.",
+          "id": "tc_assigned_users_all_invalid_ids",
+          "implementation_id": "function_event_assigned_users",
+          "name": "assigned_user_ids has all invalid IDs",
+          "test_setup": {
+            "given": "assigned_user_ids is [999, 1000] on the Event instance and JsonplaceholderService returns nil for both IDs",
+            "then": "Returns []",
+            "when": "Event#assigned_users is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "When the external service raises an error for some IDs, the function should handle the error gracefully (e.g., skip the failed ID) and return the non-nil users.",
+          "id": "tc_assigned_users_service_failure",
+          "implementation_id": "function_event_assigned_users",
+          "name": "JsonplaceholderService fails for some IDs",
+          "test_setup": {
+            "given": "assigned_user_ids is [1, 2] on the Event instance; JsonplaceholderService returns a user for ID 1 and raises an exception for ID 2",
+            "then": "Returns [user_object_for_id_1] and does not raise an exception",
+            "when": "Event#assigned_users is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "When assigned_user_ids contains duplicate IDs, the function should fetch each user for each occurrence and return duplicates in the result as per the number of times the ID appears.",
+          "id": "tc_assigned_users_duplicate_ids",
+          "implementation_id": "function_event_assigned_users",
+          "name": "assigned_user_ids contains duplicate IDs",
+          "test_setup": {
+            "given": "assigned_user_ids is [1, 1, 2] on the Event instance and JsonplaceholderService returns valid users for IDs 1 and 2",
+            "then": "Returns [user_object_for_id_1, user_object_for_id_1, user_object_for_id_2]",
+            "when": "Event#assigned_users is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "When assigned_user_ids contains non-integer values, the function should handle them gracefully by skipping invalid types.",
+          "id": "tc_assigned_users_non_integer_ids",
+          "implementation_id": "function_event_assigned_users",
+          "name": "assigned_user_ids contains non-integer IDs",
+          "test_setup": {
+            "given": "assigned_user_ids is [1, 'a', null] on the Event instance; JsonplaceholderService returns a user for ID 1 and nil for others",
+            "then": "Returns [user_object_for_id_1]",
+            "when": "Event#assigned_users is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "When assigned_user_ids contains a large number of valid user IDs, the function should return all corresponding user objects.",
+          "id": "tc_assigned_users_large_number_ids",
+          "implementation_id": "function_event_assigned_users",
+          "name": "assigned_user_ids contains a large number of valid IDs",
+          "test_setup": {
+            "given": "assigned_user_ids is [1, 2, ..., 1000] on the Event instance and JsonplaceholderService returns a valid user for each ID",
+            "then": "Returns [user_object_for_id_1, ..., user_object_for_id_1000]",
+            "when": "Event#assigned_users is called"
+          },
+          "type": "edge"
+        }
+      ]
+    },
+    {
+      "implementation_id": "function_event_assigned_user_count",
+      "test_cases": [
+        {
+          "description": "Should return the number of assigned users when assigned_user_ids contains multiple user IDs.",
+          "id": "assigned_user_count_basic_positive",
+          "implementation_id": "function_event_assigned_user_count",
+          "name": "returns_count_when_users_assigned",
+          "test_setup": {
+            "given": "An Event instance with assigned_user_ids = [1, 2, 3]",
+            "then": "3",
+            "when": "assigned_user_count is called"
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Should return 0 when assigned_user_ids is an empty array.",
+          "id": "assigned_user_count_no_users",
+          "implementation_id": "function_event_assigned_user_count",
+          "name": "returns_zero_when_no_users_assigned",
+          "test_setup": {
+            "given": "An Event instance with assigned_user_ids = []",
+            "then": "0",
+            "when": "assigned_user_count is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Should return 0 when assigned_user_ids is nil.",
+          "id": "assigned_user_count_nil_assigned_users",
+          "implementation_id": "function_event_assigned_user_count",
+          "name": "returns_zero_when_assigned_user_ids_is_nil",
+          "test_setup": {
+            "given": "An Event instance with assigned_user_ids = null",
+            "then": "0",
+            "when": "assigned_user_count is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Should return 1 when assigned_user_ids contains a single user ID.",
+          "id": "assigned_user_count_single_user",
+          "implementation_id": "function_event_assigned_user_count",
+          "name": "returns_one_when_one_user_assigned",
+          "test_setup": {
+            "given": "An Event instance with assigned_user_ids = [42]",
+            "then": "1",
+            "when": "assigned_user_count is called"
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Should count all entries, including duplicates, in assigned_user_ids.",
+          "id": "assigned_user_count_with_duplicate_ids",
+          "implementation_id": "function_event_assigned_user_count",
+          "name": "counts_duplicates_in_assigned_user_ids",
+          "test_setup": {
+            "given": "An Event instance with assigned_user_ids = [5, 5, 7]",
+            "then": "3",
+            "when": "assigned_user_count is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Should return the correct count when assigned_user_ids contains a large number of user IDs.",
+          "id": "assigned_user_count_large_number_of_users",
+          "implementation_id": "function_event_assigned_user_count",
+          "name": "returns_count_for_large_number_of_assigned_users",
+          "test_setup": {
+            "given": "An Event instance with assigned_user_ids = [1, 2, ..., 1000]",
+            "then": "1000",
+            "when": "assigned_user_count is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Should handle the case when assigned_user_ids is not an array (e.g. string or number) and return 0.",
+          "id": "assigned_user_count_non_array_type",
+          "implementation_id": "function_event_assigned_user_count",
+          "name": "handles_non_array_assigned_user_ids",
+          "test_setup": {
+            "given": "An Event instance with assigned_user_ids = 'invalid_type'",
+            "then": "0",
+            "when": "assigned_user_count is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Should count nil elements within assigned_user_ids array.",
+          "id": "assigned_user_count_array_with_nil_elements",
+          "implementation_id": "function_event_assigned_user_count",
+          "name": "counts_nil_elements_in_assigned_user_ids",
+          "test_setup": {
+            "given": "An Event instance with assigned_user_ids = [null, 2, 3]",
+            "then": "3",
+            "when": "assigned_user_count is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Should count all elements of assigned_user_ids, regardless of type.",
+          "id": "assigned_user_count_with_non_integer_ids",
+          "implementation_id": "function_event_assigned_user_count",
+          "name": "counts_non_integer_ids_in_assigned_user_ids",
+          "test_setup": {
+            "given": "An Event instance with assigned_user_ids = ['a', 2, 3.5]",
+            "then": "3",
+            "when": "assigned_user_count is called"
+          },
+          "type": "edge"
+        }
+      ]
+    }
+  ],
   "component": [],
   "endpoint": []
 }
