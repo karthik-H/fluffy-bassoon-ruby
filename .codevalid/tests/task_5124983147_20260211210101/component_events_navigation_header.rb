@@ -174,10 +174,6 @@ class ComponentEventsNavigationHeaderTest < ActionDispatch::IntegrationTest
     # EventsController we create a minimal stub route for this test using a
     # custom request to an existing action but with a manipulated path helper.
     #
-    # Strategy: visit the events path but override request.path via a
-    # middleware-transparent approach – instead, visit root and then assert the
-    # logic directly from the ERB active-state logic.
-    #
     # Since '/about' is not a defined route it will raise a RoutingError.
     # We assert the logic by visiting a path that is neither root, events_path,
     # nor new_event_path, and confirming no 'active' class appears on either link.
