@@ -3,7 +3,6 @@ class Event < ApplicationRecord
   
   def assigned_user_ids
     value = read_attribute(:assigned_user_ids)
-    return [] if value.blank?
     JSON.parse(value) rescue []
   end
   
