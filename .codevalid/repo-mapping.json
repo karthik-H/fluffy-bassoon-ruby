@@ -57,7 +57,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Displays a single event's details. The before_action :set_event loads @event by ID. The before_action :fetch_users also runs for show, loading @users (though the show view uses @event.assigned_users from the model rather than @users directly).",
-        "change_type": "updated",
+        "change_type": "unchanged",
         "file_path": "app/controllers/events_controller.rb",
         "id": "controller_events_show",
         "name": "EventsController#show",
@@ -111,7 +111,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Defines RESTful routes for all event management actions and sets events#index as the root route.",
-        "change_type": "updated",
+        "change_type": "unchanged",
         "file_path": "config/routes.rb",
         "id": "endpoint_events_resource",
         "name": "resources :events",
@@ -137,7 +137,7 @@
         "type": "function"
       },
       {
-        "How_is_it_connected_to_implementation": "Handles event removal. Destroys the event and redirects to the events list with a success notice message.",
+        "How_is_it_connected_to_implementation": "Handles event removal. Destroys the event and redirects to the events list with a success notice message. Does not handle destroy failures; no red alert flash is set on error.",
         "change_type": "unchanged",
         "file_path": "app/controllers/events_controller.rb",
         "id": "controller_events_destroy",
@@ -183,7 +183,7 @@
       },
       {
         "How_is_it_connected_to_implementation": "Fetches a single user by ID from the JSONPlaceholder API with a 5-minute Rails cache per user. Used by Event#assigned_users to resolve each assigned user ID into a full user object for display in the event detail view.",
-        "change_type": "",
+        "change_type": "unchanged",
         "file_path": "app/services/jsonplaceholder_service.rb",
         "id": "jsonplaceholderservice_fetch_user",
         "name": "JsonplaceholderService.fetch_user",
@@ -228,7 +228,7 @@
       }
     ],
     "missing_implementations": [
-      "Event removal via list/detail shows only a success notice; there is no error handling if the destroy operation fails, so a red error status message is never shown to the user as required by the acceptance criteria."
+      "Event removal via list/detail prompts for confirmation; upon confirming, deletes event, returns to list view, and displays status message (green or red based on outcome). The destroy action in EventsController always redirects with a success notice and has no begin/rescue block to catch failures, so a red error alert message is never shown to the user when the destroy operation fails."
     ]
   }
 }

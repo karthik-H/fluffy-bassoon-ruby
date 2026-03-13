@@ -152,6 +152,36 @@
             "when": "assigned_user_ids method is called"
           },
           "type": "edge"
+        },
+        {
+          "description": "If assigned_user_ids contains valid JSON with surrounding whitespace, it should parse correctly.",
+          "id": "handles_whitespace_wrapped_json",
+          "implementation_id": "function_event_assigned_user_ids",
+          "name": "handles_whitespace_wrapped_json",
+          "test_setup": {
+            "given": "assigned_user_ids attribute is set to '   [1,2]   '",
+            "then": [
+              1,
+              2
+            ],
+            "when": "assigned_user_ids method is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "If the stored assigned_user_ids attribute is already an array instead of a JSON string, the function should return it directly.",
+          "id": "handles_non_string_preparsed_array",
+          "implementation_id": "function_event_assigned_user_ids",
+          "name": "handles_non_string_preparsed_array",
+          "test_setup": {
+            "given": "assigned_user_ids attribute is set to [5, 6]",
+            "then": [
+              5,
+              6
+            ],
+            "when": "assigned_user_ids method is called"
+          },
+          "type": "edge"
         }
       ]
     },
@@ -349,6 +379,90 @@
             "when": "Event#assigned_user_ids= is called"
           },
           "type": "edge"
+        },
+        {
+          "description": "Assigns an array containing Ruby symbols and expects JSON conversion with symbols converted to strings.",
+          "id": "assign_array_with_symbols",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_array_with_symbols",
+          "test_setup": {
+            "given": "value = [:a, :b]",
+            "then": "assigned_user_ids attribute is set to '[\"a\",\"b\"]'",
+            "when": "Event#assigned_user_ids= is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Assigns an array with boolean elements and expects valid JSON conversion.",
+          "id": "assign_array_with_boolean_values",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_array_with_boolean_values",
+          "test_setup": {
+            "given": "value = [true, false]",
+            "then": "assigned_user_ids attribute is set to '[true,false]'",
+            "when": "Event#assigned_user_ids= is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Assigns an array containing empty strings and expects JSON conversion.",
+          "id": "assign_array_with_empty_strings",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_array_with_empty_strings",
+          "test_setup": {
+            "given": "value = [\"\"]",
+            "then": "assigned_user_ids attribute is set to '[\"\"]'",
+            "when": "Event#assigned_user_ids= is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Assigns an array containing a deeply nested array structure and expects correct JSON conversion.",
+          "id": "assign_array_with_large_nested_structure",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_array_with_large_nested_structure",
+          "test_setup": {
+            "given": "value = [1, [2, [3, [4]]]]",
+            "then": "assigned_user_ids attribute is set to '[1,[2,[3,[4]]]]'",
+            "when": "Event#assigned_user_ids= is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Assigns a float instead of an array and expects setter to store value as-is.",
+          "id": "assign_float_value",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_float_value",
+          "test_setup": {
+            "given": "value = 3.14",
+            "then": "assigned_user_ids attribute is set to 3.14",
+            "when": "Event#assigned_user_ids= is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Assigns an arbitrary Ruby object and expects it to be stored as-is.",
+          "id": "assign_object_value",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_object_value",
+          "test_setup": {
+            "given": "value = Object.new",
+            "then": "assigned_user_ids attribute stores the object reference as-is",
+            "when": "Event#assigned_user_ids= is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Assigns an array with unsupported JSON types (e.g., Procs) and expects JSON conversion to raise an error.",
+          "id": "assign_array_with_unsupported_types",
+          "implementation_id": "function_event_assigned_user_ids_setter",
+          "name": "assign_array_with_unsupported_types",
+          "test_setup": {
+            "given": "value = [->{}]",
+            "then": "JSON generation is expected to fail",
+            "when": "Event#assigned_user_ids= is called"
+          },
+          "type": "negative"
         }
       ]
     },
@@ -486,6 +600,18 @@
             "when": "assigned_users is called."
           },
           "type": "edge"
+        },
+        {
+          "description": "Should treat non-array assigned_user_ids (e.g., string, number, object) as invalid and return empty array.",
+          "id": "handles_assigned_user_ids_not_array",
+          "implementation_id": "function_event_assigned_users",
+          "name": "handles_assigned_user_ids_not_array",
+          "test_setup": {
+            "given": "Event with assigned_user_ids = 'not-an-array'.",
+            "then": "[]",
+            "when": "assigned_users is called."
+          },
+          "type": "negative"
         }
       ]
     },
@@ -599,6 +725,42 @@
             "when": "assigned_user_count is called"
           },
           "type": "negative"
+        },
+        {
+          "description": "Returns 0 when assigned_user_ids is a boolean value.",
+          "id": "count_handles_boolean_assigned_user_ids",
+          "implementation_id": "function_event_assigned_user_count",
+          "name": "count_handles_boolean_assigned_user_ids",
+          "test_setup": {
+            "given": "An Event instance with assigned_user_ids = true",
+            "then": "Return value is 0",
+            "when": "assigned_user_count is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Ensures nested arrays are counted as single elements per array semantics.",
+          "id": "count_handles_mixed_nested_arrays",
+          "implementation_id": "function_event_assigned_user_count",
+          "name": "count_handles_mixed_nested_arrays",
+          "test_setup": {
+            "given": "An Event instance with assigned_user_ids = [1, [2,3], 4]",
+            "then": "Return value is 3",
+            "when": "assigned_user_count is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Ensures function works when assigned_user_ids is a frozen array.",
+          "id": "count_handles_frozen_array",
+          "implementation_id": "function_event_assigned_user_count",
+          "name": "count_handles_frozen_array",
+          "test_setup": {
+            "given": "An Event instance with assigned_user_ids = [1, 2].freeze",
+            "then": "Return value is 2",
+            "when": "assigned_user_count is called"
+          },
+          "type": "positive"
         }
       ]
     },
@@ -734,6 +896,42 @@
             "given": "Client sends GET /events?sort=asc&foo=bar but controller does not support custom sorting.",
             "then": "Events are returned ordered by created_at descending, ignoring unsupported parameters.",
             "when": "EventsController#index is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Should correctly order events when created_at timestamps include different timezones.",
+          "id": "fetch_events_with_timezone_variations",
+          "implementation_id": "controller_events_index",
+          "name": "fetch_events_with_timezone_variations",
+          "test_setup": {
+            "given": "Database contains events with created_at timestamps in UTC, PST, and EST.",
+            "then": "Events are ordered by the normalized UTC created_at descending.",
+            "when": "GET request is made to EventsController#index"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Should respect millisecond differences in created_at ordering.",
+          "id": "fetch_events_with_millisecond_precision",
+          "implementation_id": "controller_events_index",
+          "name": "fetch_events_with_millisecond_precision",
+          "test_setup": {
+            "given": "Database contains events differing only by milliseconds in created_at.",
+            "then": "Events appear in exact millisecond-descending order.",
+            "when": "GET request is made to EventsController#index"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Should deny access when user lacks permission to view events.",
+          "id": "fetch_events_with_authorization_required",
+          "implementation_id": "controller_events_index",
+          "name": "fetch_events_with_authorization_required",
+          "test_setup": {
+            "given": "User is authenticated but lacks permission to view events.",
+            "then": "Controller returns 403 Forbidden or redirects to appropriate error page.",
+            "when": "GET request is made to EventsController#index"
           },
           "type": "negative"
         }
@@ -1034,6 +1232,42 @@
             "when": "EventsController#new initializes view data."
           },
           "type": "positive"
+        },
+        {
+          "description": "Ensures the new event page loads necessary UI metadata for search, selection counter, and multi-select inputs.",
+          "id": "new_event_form_ui_metadata",
+          "implementation_id": "controller_events_new",
+          "name": "new_event_form_ui_metadata",
+          "test_setup": {
+            "given": "User navigates to /events/new.",
+            "then": "View receives all necessary variables to render search box state, selection counter placeholder, and multi-select list.",
+            "when": "EventsController#new is called."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Handles the scenario where external user list loads but contains zero valid assignable users.",
+          "id": "no_valid_assignable_users",
+          "implementation_id": "controller_events_new",
+          "name": "no_valid_assignable_users",
+          "test_setup": {
+            "given": "External API returns users but all are filtered out as invalid or ineligible.",
+            "then": "@users results in an empty list; @event still initializes successfully.",
+            "when": "EventsController#new runs fetch_users."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Ensures controller does not attempt saving or modifying any event-related data during before_action.",
+          "id": "before_action_side_effect_check",
+          "implementation_id": "controller_events_new",
+          "name": "before_action_side_effect_check",
+          "test_setup": {
+            "given": "fetch_users before_action runs.",
+            "then": "No Event persistence or modification is triggered by before_action logic.",
+            "when": "EventsController#new is called."
+          },
+          "type": "negative"
         }
       ]
     },
@@ -1195,6 +1429,30 @@
             "when": "The edit action loads users."
           },
           "type": "edge"
+        },
+        {
+          "description": "Tests handling when external service returns an excessively large user list causing performance concerns.",
+          "id": "Edit_event_when_user_list_is_extremely_large_and_paginated_improperly",
+          "implementation_id": "controller_events_edit",
+          "name": "Edit event when user list is extremely large and paginated improperly",
+          "test_setup": {
+            "given": "JsonplaceholderService returns 50000 users without pagination.",
+            "then": "The controller handles the load without crashing, even if slow.",
+            "when": "The edit action attempts to load the users."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Ensures proper error handling when the event ID param is missing or nil.",
+          "id": "Edit_event_when_event_ID_is_nil",
+          "implementation_id": "controller_events_edit",
+          "name": "Edit event when event ID is nil",
+          "test_setup": {
+            "given": "The edit action receives a nil ID parameter.",
+            "then": "The controller raises an error or redirects appropriately.",
+            "when": "The edit action runs."
+          },
+          "type": "negative"
         }
       ]
     },
@@ -1565,6 +1823,30 @@
             "when": "EventsController#update is called with malformed parameter types."
           },
           "type": "negative"
+        },
+        {
+          "description": "Ensures controller handles missing event root parameter gracefully.",
+          "id": "Update_fails_when_no_parameters_are_provided_at_all",
+          "implementation_id": "controller_events_update",
+          "name": "Update fails when no parameters are provided at all",
+          "test_setup": {
+            "given": "An existing event and completely missing event parameter payload.",
+            "then": "Event is not updated and edit is re-rendered with errors.",
+            "when": "EventsController#update is called with no event key."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Checks timeout handling during fetch_users on failed update.",
+          "id": "Update_fails_when_external_user_list_service_times_out",
+          "implementation_id": "controller_events_update",
+          "name": "Update fails when external user list service times out",
+          "test_setup": {
+            "given": "Event update fails due to invalid params and external user service times out.",
+            "then": "Edit renders with generic error; users list empty.",
+            "when": "EventsController#update triggers fetch_users."
+          },
+          "type": "edge"
         }
       ]
     },
@@ -1702,6 +1984,42 @@
             "when": "The destroy action is invoked without confirmation."
           },
           "type": "negative"
+        },
+        {
+          "description": "Ensures destroy fails if session expires before controller action completes.",
+          "id": "Destroy_Event_While_Logged_In_But_Session_Expired_Mid_Request",
+          "implementation_id": "controller_events_destroy",
+          "name": "Destroy Event While Logged In But Session Expired Mid-Request",
+          "test_setup": {
+            "given": "User was logged in but the session expires before destroy executes.",
+            "then": "User is redirected to login and event is not deleted.",
+            "when": "The destroy action is called."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Ensures system handles extremely large numeric IDs.",
+          "id": "Destroy_Event_With_Very_Large_ID",
+          "implementation_id": "controller_events_destroy",
+          "name": "Destroy Event With Very Large ID",
+          "test_setup": {
+            "given": "Destroy called with id=999999999999.",
+            "then": "RecordNotFound or 404 is returned.",
+            "when": "The destroy action is executed."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Ensures new success message overrides old flash messages.",
+          "id": "Destroy_Event_When_Flash_Already_Contains_Messages",
+          "implementation_id": "controller_events_destroy",
+          "name": "Destroy Event When Flash Already Contains Messages",
+          "test_setup": {
+            "given": "Flash contains stale messages.",
+            "then": "Flash contains only the new success notice.",
+            "when": "Destroy is performed successfully."
+          },
+          "type": "edge"
         }
       ]
     },
@@ -2398,6 +2716,30 @@
             "when": "Before_action triggers fetch_users."
           },
           "type": "positive"
+        },
+        {
+          "description": "Ensures fetch_users is not executed for create and update actions to avoid unnecessary external service calls.",
+          "id": "Fetch_users_does_not_run_on_create_or_update",
+          "implementation_id": "controller_events_fetch_users",
+          "name": "Fetch users does not run on create or update",
+          "test_setup": {
+            "given": "Requests are made to create and update actions.",
+            "then": "@users is not set because fetch_users should not run for create/update.",
+            "when": "Controller executes the actions."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Ensures @users is available for the event detail page to support any user-related rendering.",
+          "id": "Fetch_users_populates_list_for_show_view",
+          "implementation_id": "controller_events_fetch_users",
+          "name": "Fetch users populates list for show view",
+          "test_setup": {
+            "given": "The show action is invoked.",
+            "then": "@users is populated with the external user list.",
+            "when": "Before_action runs."
+          },
+          "type": "positive"
         }
       ]
     },
@@ -2583,6 +2925,66 @@
             "when": "JsonplaceholderService.fetch_users is called."
           },
           "type": "edge"
+        },
+        {
+          "description": "When the cache key exists but holds nil, the function treats it as a miss and fetches from the API.",
+          "id": "fetch_users_cache_key_missing",
+          "implementation_id": "service_jsonplaceholder_fetch_users",
+          "name": "fetch_users_cache_key_missing",
+          "test_setup": {
+            "given": "Rails.cache returns nil for 'jsonplaceholder_users'.",
+            "then": "API is called and the parsed result is returned.",
+            "when": "JsonplaceholderService.fetch_users is called."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "When API returns HTTP 200 but body is plain text, function returns empty array.",
+          "id": "fetch_users_api_returns_non_json_body",
+          "implementation_id": "service_jsonplaceholder_fetch_users",
+          "name": "fetch_users_api_returns_non_json_body",
+          "test_setup": {
+            "given": "Cache expired and API returns 200 with non-JSON body.",
+            "then": "Function returns empty array.",
+            "when": "JsonplaceholderService.fetch_users is called."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "When API returns 301 redirect, function returns empty array.",
+          "id": "fetch_users_api_redirect_301",
+          "implementation_id": "service_jsonplaceholder_fetch_users",
+          "name": "fetch_users_api_redirect_301",
+          "test_setup": {
+            "given": "Cache expired. API responds with 301.",
+            "then": "Function returns empty array.",
+            "when": "JsonplaceholderService.fetch_users is called."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "API returns very large but valid user list.",
+          "id": "fetch_users_api_large_payload",
+          "implementation_id": "service_jsonplaceholder_fetch_users",
+          "name": "fetch_users_api_large_payload",
+          "test_setup": {
+            "given": "Cache expired. API returns HTTP 200 with large but valid JSON array.",
+            "then": "Function returns parsed list.",
+            "when": "JsonplaceholderService.fetch_users is called."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "SSL failure when calling API should return empty array.",
+          "id": "fetch_users_api_ssl_error",
+          "implementation_id": "service_jsonplaceholder_fetch_users",
+          "name": "fetch_users_api_ssl_error",
+          "test_setup": {
+            "given": "Cache expired. API call raises SSL error.",
+            "then": "Function returns empty array.",
+            "when": "JsonplaceholderService.fetch_users is called."
+          },
+          "type": "negative"
         }
       ]
     },
@@ -2768,6 +3170,42 @@
             "when": "Function executed"
           },
           "type": "positive"
+        },
+        {
+          "description": "If API returns 200 but body is empty or null, service returns nil.",
+          "id": "fetch_user_null_response_body",
+          "implementation_id": "jsonplaceholderservice_fetch_user",
+          "name": "fetch_user_null_response_body",
+          "test_setup": {
+            "given": "Rails.cache empty; API returns 200 but body is empty or null.",
+            "then": "Return nil; no cache entry created.",
+            "when": "JsonplaceholderService.fetch_user(7) is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Large numeric user IDs should still result in a 404 and return nil.",
+          "id": "fetch_user_large_user_id_boundary",
+          "implementation_id": "jsonplaceholderservice_fetch_user",
+          "name": "fetch_user_large_user_id_boundary",
+          "test_setup": {
+            "given": "API GET /users/999999 returns 404.",
+            "then": "Return nil; no caching.",
+            "when": "JsonplaceholderService.fetch_user(999999) is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "If cache explicitly stores nil (from prior failed call), service should still retry API request.",
+          "id": "fetch_user_cache_entry_explicit_nil",
+          "implementation_id": "jsonplaceholderservice_fetch_user",
+          "name": "fetch_user_cache_entry_explicit_nil",
+          "test_setup": {
+            "given": "Rails.cache contains key jsonplaceholder_user_8 with value nil; API returns 200 with valid JSON.",
+            "then": "Return valid user JSON; overwrite cache.",
+            "when": "JsonplaceholderService.fetch_user(8) is called"
+          },
+          "type": "edge"
         }
       ]
     }
@@ -3141,9 +3579,32 @@
             "when": "Breadcrumbs component renders."
           },
           "type": "edge"
+        },
+        {
+          "description": "Verify breadcrumbs for the new event creation page.",
+          "id": "Render_Breadcrumbs_on_New_Event_Page",
+          "implementation_id": "component_events_breadcrumbs",
+          "name": "Render Breadcrumbs on New Event Page",
+          "test_setup": {
+            "given": "User navigates to '/events/new'.",
+            "then": "Breadcrumbs display 'Home > Events > New Event'.",
+            "when": "Breadcrumbs component renders."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Verify fallback behavior when event data cannot be loaded for detail/edit pages.",
+          "id": "Negative_Event_Not_Found_When_Rendering_Breadcrumbs",
+          "implementation_id": "component_events_breadcrumbs",
+          "name": "Negative: Event Not Found When Rendering Breadcrumbs",
+          "test_setup": {
+            "given": "User navigates to '/events/999/edit' but event 999 does not exist.",
+            "then": "Breadcrumbs display 'Home > Events > Unknown' or fallback label without breaking UI.",
+            "when": "Breadcrumbs component renders."
+          },
+          "type": "negative"
         }
-      ],
-      "test_path": ".codevalid/tests/task_5124983147_20260211210101/component_events_breadcrumbs.py"
+      ]
     },
     {
       "implementation_id": "component_events_flash_messages",
@@ -3217,30 +3678,6 @@
             "given": "alert prop is an empty string, notice prop is undefined or null",
             "then": "No alert message should be rendered",
             "when": "Component is rendered"
-          },
-          "type": "edge"
-        },
-        {
-          "description": "Ensures the notice message is removed after a user action such as clicking a dismiss button.",
-          "id": "flashmessages_notice_cleared_on_action_edge",
-          "implementation_id": "component_events_flash_messages",
-          "name": "Clear notice message after user action",
-          "test_setup": {
-            "given": "notice prop is set to 'Event deleted', alert prop is undefined; component has a dismiss button for notice",
-            "then": "The notice message should no longer be visible",
-            "when": "User clicks the dismiss button on the notice message"
-          },
-          "type": "edge"
-        },
-        {
-          "description": "Ensures the alert message is removed after a user action such as clicking a dismiss button.",
-          "id": "flashmessages_alert_cleared_on_action_edge",
-          "implementation_id": "component_events_flash_messages",
-          "name": "Clear alert message after user action",
-          "test_setup": {
-            "given": "alert prop is set to 'Access denied', notice prop is undefined; component has a dismiss button for alert",
-            "then": "The alert message should no longer be visible",
-            "when": "User clicks the dismiss button on the alert message"
           },
           "type": "edge"
         },
@@ -3351,6 +3788,42 @@
             "when": "Component is rendered"
           },
           "type": "negative"
+        },
+        {
+          "description": "Ensures flash messages appear at the top of the main content container, per requirement.",
+          "id": "Render_flash_messages_at_top_of_main_content_area",
+          "implementation_id": "component_events_flash_messages",
+          "name": "Render flash messages at top of main content area",
+          "test_setup": {
+            "given": "notice='Saved'",
+            "then": "Notice is displayed at the top of the main content area",
+            "when": "Component is rendered"
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Ensures old flash messages do not persist incorrectly after a second redirect.",
+          "id": "Render_only_latest_flash_messages_on_redirect",
+          "implementation_id": "component_events_flash_messages",
+          "name": "Render only latest flash messages on redirect",
+          "test_setup": {
+            "given": "Server sets flash notice, redirects, then sets a new flash notice and redirects again",
+            "then": "Only the latest notice is displayed",
+            "when": "Final page loads"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Component should ignore non-string flash values.",
+          "id": "Do_not_render_non_string_flash_values",
+          "implementation_id": "component_events_flash_messages",
+          "name": "Do not render non-string flash values",
+          "test_setup": {
+            "given": "notice is an object or array",
+            "then": "No notice message should be rendered",
+            "when": "Component is rendered"
+          },
+          "type": "negative"
         }
       ]
     },
@@ -3400,7 +3873,7 @@
           "name": "Render Empty State When No Events Exist",
           "test_setup": {
             "given": "@events is an empty array",
-            "then": "An empty state message is displayed to the user",
+            "then": "An empty state message is displayed to the user, including a link to create the first event",
             "when": "The component is rendered"
           },
           "type": "positive"
@@ -3448,7 +3921,7 @@
           "name": "Remove Event Action Functionality",
           "test_setup": {
             "given": "@events contains at least two events",
-            "then": "The event is removed from the list and UI updates accordingly",
+            "then": "The event is removed from the list, UI updates accordingly, and success message is shown",
             "when": "User clicks the Remove action and confirms deletion for an event"
           },
           "type": "positive"
@@ -3496,7 +3969,7 @@
           "name": "Event with Missing Description",
           "test_setup": {
             "given": "@events contains an event with a null or empty description",
-            "then": "The event is displayed with either an empty description area or a placeholder",
+            "then": "The event displays 'No description'",
             "when": "The component is rendered"
           },
           "type": "edge"
@@ -3508,7 +3981,7 @@
           "name": "Error State on Event Fetch Failure",
           "test_setup": {
             "given": "Fetching @events from the server fails with an error",
-            "then": "An error state or message is shown to the user",
+            "then": "A red error message is shown to the user",
             "when": "The component attempts to render"
           },
           "type": "negative"
@@ -3520,7 +3993,7 @@
           "name": "Remove Event API Failure Handling",
           "test_setup": {
             "given": "@events contains at least one event and the remove API returns an error",
-            "then": "Event remains in the list and an appropriate error message is shown",
+            "then": "Event remains in the list and a red error message is shown",
             "when": "User clicks Remove and confirms deletion"
           },
           "type": "negative"
@@ -3532,7 +4005,7 @@
           "name": "Event List with Incomplete Data",
           "test_setup": {
             "given": "@events contains an event with missing title, description, or assigned_users_count fields",
-            "then": "Component does not crash and displays fallback values or empty fields",
+            "then": "Component does not crash and displays fallback values",
             "when": "The component is rendered"
           },
           "type": "negative"
@@ -3548,9 +4021,68 @@
             "when": "User navigates using keyboard (Tab, Enter, etc.)"
           },
           "type": "positive"
+        },
+        {
+          "description": "Verify that events are sorted newest first.",
+          "id": "Sort_Events_Newest_First",
+          "implementation_id": "component_events_list",
+          "name": "Sort Events Newest First",
+          "test_setup": {
+            "given": "@events contains multiple events with different creation timestamps",
+            "then": "Events appear in descending order of creation date",
+            "when": "The component is rendered"
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Verify user count badge appears only when assigned_user_count > 0.",
+          "id": "Conditional_User_Count_Badge",
+          "implementation_id": "component_events_list",
+          "name": "Conditional User Count Badge",
+          "test_setup": {
+            "given": "@events contains events with 0 and >0 assigned users",
+            "then": "Badge appears only for events with assigned_user_count > 0",
+            "when": "The component is rendered"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Verify that clicking Remove triggers confirmation dialog.",
+          "id": "Remove_Event_Confirmation_Dialog",
+          "implementation_id": "component_events_list",
+          "name": "Remove Event Confirmation Dialog",
+          "test_setup": {
+            "given": "@events contains at least one event",
+            "then": "Confirmation dialog appears before deletion proceeds",
+            "when": "User clicks Remove"
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Verify event title fallback behavior when title is missing.",
+          "id": "Missing_Title_Fallback",
+          "implementation_id": "component_events_list",
+          "name": "Missing Title Fallback",
+          "test_setup": {
+            "given": "@events contains an event with null or empty title",
+            "then": "Component displays fallback value such as 'Untitled Event'",
+            "when": "Component is rendered"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Verify that empty state does not show stale event list.",
+          "id": "Empty_State_Correctness",
+          "implementation_id": "component_events_list",
+          "name": "Empty State Correctness",
+          "test_setup": {
+            "given": "@events transitions from non-empty to empty after deletion",
+            "then": "Event list disappears and empty state reappears",
+            "when": "Component re-renders"
+          },
+          "type": "edge"
         }
-      ],
-      "test_path": ".codevalid/tests/task_5124983147_20260211210101/component_events_list.py"
+      ]
     },
     {
       "implementation_id": "component_events_detail",
