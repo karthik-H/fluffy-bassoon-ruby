@@ -363,6 +363,163 @@
             "when": "event_params is executed"
           },
           "type": "negative"
+        },
+        {
+          "description": "Handles nested arrays by flattening only via strong params behavior, keeping only valid integers.",
+          "id": "assigned_user_ids_nested_array",
+          "implementation_id": "eventscontroller_event_params",
+          "name": "assigned_user_ids_nested_array",
+          "test_setup": {
+            "given": {
+              "request_params": {
+                "event": {
+                  "assigned_user_ids": [
+                    [
+                      "1",
+                      "2"
+                    ],
+                    "3",
+                    ""
+                  ],
+                  "description": "Nested",
+                  "title": "Nested IDs"
+                }
+              }
+            },
+            "then": {
+              "response_body_json": {
+                "assigned_user_ids": [
+                  1,
+                  2,
+                  3
+                ],
+                "description": "Nested",
+                "title": "Nested IDs"
+              }
+            },
+            "when": "event_params is executed"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Boolean values inside assigned_user_ids should be treated as invalid and removed.",
+          "id": "assigned_user_ids_boolean_values",
+          "implementation_id": "eventscontroller_event_params",
+          "name": "assigned_user_ids_boolean_values",
+          "test_setup": {
+            "given": {
+              "request_params": {
+                "event": {
+                  "assigned_user_ids": [
+                    true,
+                    false,
+                    "5"
+                  ],
+                  "description": "Booleans",
+                  "title": "Boolean Test"
+                }
+              }
+            },
+            "then": {
+              "response_body_json": {
+                "assigned_user_ids": [
+                  5
+                ],
+                "description": "Booleans",
+                "title": "Boolean Test"
+              }
+            },
+            "when": "event_params is executed"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Float values should be converted to integers only if originally numeric strings representing integers; floats are rejected.",
+          "id": "assigned_user_ids_float_values",
+          "implementation_id": "eventscontroller_event_params",
+          "name": "assigned_user_ids_float_values",
+          "test_setup": {
+            "given": {
+              "request_params": {
+                "event": {
+                  "assigned_user_ids": [
+                    "1.5",
+                    "2",
+                    "3.0"
+                  ],
+                  "description": "Floats",
+                  "title": "Float Test"
+                }
+              }
+            },
+            "then": {
+              "response_body_json": {
+                "assigned_user_ids": [
+                  2
+                ],
+                "description": "Floats",
+                "title": "Float Test"
+              }
+            },
+            "when": "event_params is executed"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Missing title field should simply omit it from returned params.",
+          "id": "title_missing_key",
+          "implementation_id": "eventscontroller_event_params",
+          "name": "title_missing_key",
+          "test_setup": {
+            "given": {
+              "request_params": {
+                "event": {
+                  "assigned_user_ids": [
+                    "1"
+                  ],
+                  "description": "Missing title"
+                }
+              }
+            },
+            "then": {
+              "response_body_json": {
+                "assigned_user_ids": [
+                  1
+                ],
+                "description": "Missing title"
+              }
+            },
+            "when": "event_params is executed"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Missing description field should simply omit it from returned params.",
+          "id": "description_missing_key",
+          "implementation_id": "eventscontroller_event_params",
+          "name": "description_missing_key",
+          "test_setup": {
+            "given": {
+              "request_params": {
+                "event": {
+                  "assigned_user_ids": [
+                    "2"
+                  ],
+                  "title": "No Description"
+                }
+              }
+            },
+            "then": {
+              "response_body_json": {
+                "assigned_user_ids": [
+                  2
+                ],
+                "title": "No Description"
+              }
+            },
+            "when": "event_params is executed"
+          },
+          "type": "edge"
         }
       ]
     },
@@ -536,6 +693,30 @@
             "when": "show page renders."
           },
           "type": "positive"
+        },
+        {
+          "description": "Ensures controller tolerates unexpected non-array responses.",
+          "id": "fetch_users_handles_non_array_response_type",
+          "implementation_id": "eventscontroller_fetch_users",
+          "name": "fetch_users_handles_non_array_response_type",
+          "test_setup": {
+            "given": "JsonplaceholderService.fetch_users returns a string, number, or object instead of an array.",
+            "then": "@users receives the raw value; no crash occurs; UI treats it as no selectable users.",
+            "when": "fetch_users runs."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Ensures fetch_users only runs for new, edit, and show actions as required.",
+          "id": "fetch_users_not_called_for_index_or_destroy_actions",
+          "implementation_id": "eventscontroller_fetch_users",
+          "name": "fetch_users_not_called_for_index_or_destroy_actions",
+          "test_setup": {
+            "given": "User triggers index or destroy actions.",
+            "then": "fetch_users does not run and @users is not assigned.",
+            "when": "Controller processes the request."
+          },
+          "type": "positive"
         }
       ]
     },
@@ -705,6 +886,42 @@
           "name": "event_deleted_between_request_and_load",
           "test_setup": {
             "given": "params[:id] = 12 but event is deleted milliseconds before set_event executes",
+            "then": "ActiveRecord::RecordNotFound is raised",
+            "when": "set_event is invoked"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Ensures array input for params[:id] results in error.",
+          "id": "fail_when_event_id_is_array",
+          "implementation_id": "eventscontroller_set_event",
+          "name": "fail_when_event_id_is_array",
+          "test_setup": {
+            "given": "params[:id] = []",
+            "then": "ActiveRecord::RecordNotFound is raised",
+            "when": "set_event is invoked"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Ensures object/hash input for params[:id] results in error.",
+          "id": "fail_when_event_id_is_object",
+          "implementation_id": "eventscontroller_set_event",
+          "name": "fail_when_event_id_is_object",
+          "test_setup": {
+            "given": "params[:id] = {}",
+            "then": "ActiveRecord::RecordNotFound is raised",
+            "when": "set_event is invoked"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Ensures negative numeric event IDs behave consistently.",
+          "id": "fail_when_event_id_is_negative",
+          "implementation_id": "eventscontroller_set_event",
+          "name": "fail_when_event_id_is_negative",
+          "test_setup": {
+            "given": "params[:id] = -1",
             "then": "ActiveRecord::RecordNotFound is raised",
             "when": "set_event is invoked"
           },
@@ -894,6 +1111,54 @@
             "when": "Function called multiple times within 5 minutes."
           },
           "type": "positive"
+        },
+        {
+          "description": "Handles API returning HTTP 204 with no content.",
+          "id": "fetch_users_api_returns_204_no_content",
+          "implementation_id": "jsonplaceholderservice_fetch_users",
+          "name": "fetch_users_api_returns_204_no_content",
+          "test_setup": {
+            "given": "Cache is empty. API returns HTTP 204 No Content.",
+            "then": "Returns empty array and does not cache invalid data",
+            "when": "JsonplaceholderService.fetch_users is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Ensures empty array from API failure is NOT cached.",
+          "id": "fetch_users_does_not_cache_failure_responses",
+          "implementation_id": "jsonplaceholderservice_fetch_users",
+          "name": "fetch_users_does_not_cache_failure_responses",
+          "test_setup": {
+            "given": "Cache empty. API returns HTTP 500.",
+            "then": "Returns empty array and does NOT store the result in cache",
+            "when": "JsonplaceholderService.fetch_users is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Handles connection reset errors when calling external API.",
+          "id": "fetch_users_connection_reset_error",
+          "implementation_id": "jsonplaceholderservice_fetch_users",
+          "name": "fetch_users_connection_reset_error",
+          "test_setup": {
+            "given": "Cache empty. External API call raises a connection reset exception.",
+            "then": "Logs the error and returns empty array",
+            "when": "JsonplaceholderService.fetch_users is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Ensures only the 'jsonplaceholder_users' key is used and no unrelated cache keys interfere.",
+          "id": "fetch_users_cache_key_isolated",
+          "implementation_id": "jsonplaceholderservice_fetch_users",
+          "name": "fetch_users_cache_key_isolated",
+          "test_setup": {
+            "given": "Cache contains other unrelated keys but not 'jsonplaceholder_users'.",
+            "then": "Treats cache as empty and calls external API",
+            "when": "JsonplaceholderService.fetch_users is called"
+          },
+          "type": "edge"
         }
       ]
     },
@@ -1079,6 +1344,66 @@
             "when": "fetch_user(11) is called twice"
           },
           "type": "positive"
+        },
+        {
+          "description": "Handles nil user_id safely.",
+          "id": "fetch_user_nil_user_id",
+          "implementation_id": "jsonplaceholderservice_fetch_user",
+          "name": "fetch_user_nil_user_id",
+          "test_setup": {
+            "given": "user_id = null",
+            "then": "Logs error and returns nil",
+            "when": "fetch_user(nil) is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Handles non-integer user_id values such as strings or floats.",
+          "id": "fetch_user_non_integer_user_id",
+          "implementation_id": "jsonplaceholderservice_fetch_user",
+          "name": "fetch_user_non_integer_user_id",
+          "test_setup": {
+            "given": "user_id = \"abc\"",
+            "then": "Returns nil due to invalid URI and logs error",
+            "when": "fetch_user(\"abc\") is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Handles errors when attempting to write to cache.",
+          "id": "fetch_user_cache_write_failure",
+          "implementation_id": "jsonplaceholderservice_fetch_user",
+          "name": "fetch_user_cache_write_failure",
+          "test_setup": {
+            "given": "user_id = 12, cache write raises exception after successful API fetch",
+            "then": "Returns correct API JSON but logs cache write error",
+            "when": "fetch_user(12) is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Handles HTTP 204 No Content response.",
+          "id": "fetch_user_http_204_no_content",
+          "implementation_id": "jsonplaceholderservice_fetch_user",
+          "name": "fetch_user_http_204_no_content",
+          "test_setup": {
+            "given": "user_id = 13, API returns HTTP 204 with no body",
+            "then": "Returns nil and does not cache",
+            "when": "fetch_user(13) is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Handles URI parsing failure gracefully.",
+          "id": "fetch_user_invalid_uri_error",
+          "implementation_id": "jsonplaceholderservice_fetch_user",
+          "name": "fetch_user_invalid_uri_error",
+          "test_setup": {
+            "given": "user_id is extremely malformed, causing URI.parse error",
+            "then": "Logs error and returns nil",
+            "when": "fetch_user(user_id) is called"
+          },
+          "type": "negative"
         }
       ]
     },
@@ -1158,7 +1483,7 @@
           "type": "negative"
         },
         {
-          "description": "Getter should parse JSON but still return value even if it is not an array; acceptance depends on business rule. Here expecting parsed value.",
+          "description": "Getter should parse JSON but still return value even if it is not an array.",
           "id": "returns_empty_array_on_non_array_json_value",
           "implementation_id": "event_assigned_user_ids_getter",
           "name": "returns_empty_array_on_non_array_json_value",
@@ -1194,7 +1519,7 @@
           "type": "positive"
         },
         {
-          "description": "If stored JSON is 'null', parser returns null; ensuring getter behavior.",
+          "description": "If stored JSON is 'null', parser returns null.",
           "id": "handles_null_json_value",
           "implementation_id": "event_assigned_user_ids_getter",
           "name": "handles_null_json_value",
@@ -1259,11 +1584,35 @@
           "implementation_id": "event_assigned_user_ids_getter",
           "name": "handles_utf8_characters_in_json",
           "test_setup": {
-            "given": "assigned_user_ids attribute is '[\"\u30e6\u30fc\u30b6\u30fc1\",\"\u7528\u62372\"]'",
-            "then": "[\"\u30e6\u30fc\u30b6\u30fc1\",\"\u7528\u62372\"] is returned",
+            "given": "assigned_user_ids attribute is '[\"\u30e6\u30fc\u30b6\u30fc1\",\"\u7528\u62362\"]'",
+            "then": "[\"\u30e6\u30fc\u30b6\u30fc1\",\"\u7528\u62362\"] is returned",
             "when": "assigned_user_ids() is called"
           },
           "type": "edge"
+        },
+        {
+          "description": "Getter should return empty array when the attribute is not a string and not nil (e.g., array, integer).",
+          "id": "returns_empty_array_when_attribute_is_non_string_non_nil",
+          "implementation_id": "event_assigned_user_ids_getter",
+          "name": "returns_empty_array_when_attribute_is_non_string_non_nil",
+          "test_setup": {
+            "given": "assigned_user_ids attribute is an array object like [1,2]",
+            "then": "[] is returned due to parse error",
+            "when": "assigned_user_ids() is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Getter should parse valid JSON containing a number.",
+          "id": "parses_numeric_json_value",
+          "implementation_id": "event_assigned_user_ids_getter",
+          "name": "parses_numeric_json_value",
+          "test_setup": {
+            "given": "assigned_user_ids attribute is '42'",
+            "then": "42 is returned",
+            "when": "assigned_user_ids() is called"
+          },
+          "type": "positive"
         }
       ]
     },
@@ -1449,6 +1798,42 @@
             "when": "assigned_user_ids= is invoked"
           },
           "type": "negative"
+        },
+        {
+          "description": "Arrays containing symbol values should be JSON serialized, symbols converted to strings",
+          "id": "assign_array_with_symbol_values_raises_error_or_stores_as_string",
+          "implementation_id": "event_assigned_user_ids_setter",
+          "name": "assign_array_with_symbol_values_raises_error_or_stores_as_string",
+          "test_setup": {
+            "given": "assigned_user_ids input = [:a, :b]",
+            "then": "write_attribute receives \"[\\\"a\\\",\\\"b\\\"]\"",
+            "when": "assigned_user_ids= is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "A non-serializable element inside an array should raise JSON error or fallback depending on implementation",
+          "id": "assign_array_with_non_serializable_object_raises_or_stores_raw",
+          "implementation_id": "event_assigned_user_ids_setter",
+          "name": "assign_array_with_non_serializable_object_raises_or_stores_raw",
+          "test_setup": {
+            "given": "assigned_user_ids input = [Object.new]",
+            "then": "JSON serialization fails or implementation-defined behavior occurs",
+            "when": "assigned_user_ids= is invoked"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Passing string 'null' should not be treated as nil",
+          "id": "assign_value_undefined_behavior_for_nil_string",
+          "implementation_id": "event_assigned_user_ids_setter",
+          "name": "assign_value_undefined_behavior_for_nil_string",
+          "test_setup": {
+            "given": "assigned_user_ids input = \"null\"",
+            "then": "write_attribute receives \"null\"",
+            "when": "assigned_user_ids= is called"
+          },
+          "type": "negative"
         }
       ]
     },
@@ -1528,7 +1913,7 @@
           "type": "edge"
         },
         {
-          "description": "Verify robustness when assigned_user_ids includes non\u2011integer or malformed values.",
+          "description": "Verify robustness when assigned_user_ids includes non-integer or malformed values.",
           "id": "assigned_users_handles_invalid_id_format",
           "implementation_id": "event_assigned_users",
           "name": "assigned_users_handles_invalid_id_format",
@@ -1605,11 +1990,23 @@
           "implementation_id": "event_assigned_users",
           "name": "assigned_users_does_not_modify_external_user_list",
           "test_setup": {
-            "given": "assigned_user_ids = [1], fetch_user is read\u2011only",
+            "given": "assigned_user_ids = [1], fetch_user is read-only",
             "then": "Only GET-style fetch occurs; no mutation requests sent",
             "when": "assigned_users is called"
           },
           "type": "positive"
+        },
+        {
+          "description": "Verify that duplicate IDs in assigned_user_ids each trigger a fetch and returned list preserves duplicates if fetches succeed.",
+          "id": "assigned_users_handles_duplicate_ids",
+          "implementation_id": "event_assigned_users",
+          "name": "assigned_users_handles_duplicate_ids",
+          "test_setup": {
+            "given": "assigned_user_ids = [1,1], fetch_user(1) returns valid user object",
+            "then": "[user1, user1] is returned",
+            "when": "assigned_users is called"
+          },
+          "type": "edge"
         }
       ]
     },
@@ -1660,6 +2057,54 @@
           "test_setup": {
             "given": "An event object with assigned_user_ids set to [1,2,3]",
             "then": "3 is returned",
+            "when": "assigned_user_count is called"
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Verify that duplicate user IDs are counted as separate entries because the method only returns array size.",
+          "id": "assigned_user_count_counts_duplicates_as_separate_entries",
+          "implementation_id": "event_assigned_user_count",
+          "name": "assigned_user_count_counts_duplicates_as_separate_entries",
+          "test_setup": {
+            "given": "An event object with assigned_user_ids set to [1,1,2]",
+            "then": "3 is returned",
+            "when": "assigned_user_count is called"
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Verify the method counts non-integer values because it simply returns array size.",
+          "id": "assigned_user_count_handles_non_integer_values",
+          "implementation_id": "event_assigned_user_count",
+          "name": "assigned_user_count_handles_non_integer_values",
+          "test_setup": {
+            "given": "An event object with assigned_user_ids set to ['a', null, 5]",
+            "then": "3 is returned",
+            "when": "assigned_user_count is called"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Verify the function returns correct size for very large assigned_user_ids array.",
+          "id": "assigned_user_count_handles_large_arrays",
+          "implementation_id": "event_assigned_user_count",
+          "name": "assigned_user_count_handles_large_arrays",
+          "test_setup": {
+            "given": "An event object with assigned_user_ids containing 10,000 elements",
+            "then": "10000 is returned",
+            "when": "assigned_user_count is called"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Verify the return value is always an integer.",
+          "id": "assigned_user_count_returns_integer_type",
+          "implementation_id": "event_assigned_user_count",
+          "name": "assigned_user_count_returns_integer_type",
+          "test_setup": {
+            "given": "An event object with any assigned_user_ids array",
+            "then": "Return type is integer",
             "when": "assigned_user_count is called"
           },
           "type": "positive"
@@ -2290,6 +2735,66 @@
             "given": "flash set before redirect",
             "then": "Message appears on first page load only.",
             "when": "Redirect chain completes"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Ensure component ignores flash keys other than :notice and :alert.",
+          "id": "ignore_unrelated_flash_keys",
+          "implementation_id": "application_html_erb_flash_messages",
+          "name": "ignore_unrelated_flash_keys",
+          "test_setup": {
+            "given": "flash contains { info: 'ignored', notice: 'Shown' }",
+            "then": "Only the notice message is displayed; no container appears for the info key.",
+            "when": "Page renders"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Ensure empty-string flash messages still render a container with blank content.",
+          "id": "empty_string_flash_message",
+          "implementation_id": "application_html_erb_flash_messages",
+          "name": "empty_string_flash_message",
+          "test_setup": {
+            "given": "flash contains { notice: '' }",
+            "then": "A <p class='notice'> element appears but contains no visible text.",
+            "when": "Page renders"
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Ensure nil flash values do not render an empty message container.",
+          "id": "nil_flash_message",
+          "implementation_id": "application_html_erb_flash_messages",
+          "name": "nil_flash_message",
+          "test_setup": {
+            "given": "flash contains { alert: null }",
+            "then": "No <p class='alert'> element appears.",
+            "when": "Page renders"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Verify flash messages render at the top of the main content area.",
+          "id": "flash_message_top_position",
+          "implementation_id": "application_html_erb_flash_messages",
+          "name": "flash_message_top_position",
+          "test_setup": {
+            "given": "flash contains { notice: 'Position test' }",
+            "then": "The notice appears as the first element inside the main content container.",
+            "when": "Page renders"
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Ensure flash.now messages only display for the current render.",
+          "id": "flash_message_does_not_persist_without_redirect",
+          "implementation_id": "application_html_erb_flash_messages",
+          "name": "flash_message_does_not_persist_without_redirect",
+          "test_setup": {
+            "given": "Controller sets flash.now[:alert] during render",
+            "then": "The alert appears on the first render only and does not persist on reload.",
+            "when": "Page renders and then reloads"
           },
           "type": "edge"
         }
@@ -3724,6 +4229,74 @@
             "when": "GET /events is called."
           },
           "type": "edge"
+        },
+        {
+          "description": "Verify unexpected query params do not affect event listing.",
+          "id": "get_events_unexpected_query_params_ignored",
+          "implementation_id": "eventscontroller_index",
+          "name": "get_events_unexpected_query_params_ignored",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "GET",
+          "request_url": "/events?foo=bar",
+          "response_body_json": {
+            "events": []
+          },
+          "response_status_code": 200,
+          "test_setup": {
+            "given": "System contains no events.",
+            "then": "Params are ignored and normal response is returned.",
+            "when": "GET /events is called with unknown query params."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Verify PUT is not allowed on /events index endpoint.",
+          "id": "get_events_invalid_method_put",
+          "implementation_id": "eventscontroller_index",
+          "name": "get_events_invalid_method_put",
+          "request_body_json": {
+            "foo": "bar"
+          },
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "PUT",
+          "request_url": "/events",
+          "response_body_json": {
+            "error": "Method Not Allowed"
+          },
+          "response_status_code": 405,
+          "test_setup": {
+            "given": "Index endpoint supports only GET.",
+            "then": "Error 405 is returned.",
+            "when": "PUT /events is called."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Verify DELETE is not allowed on /events index endpoint.",
+          "id": "get_events_invalid_method_delete",
+          "implementation_id": "eventscontroller_index",
+          "name": "get_events_invalid_method_delete",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "DELETE",
+          "request_url": "/events",
+          "response_body_json": {
+            "error": "Method Not Allowed"
+          },
+          "response_status_code": 405,
+          "test_setup": {
+            "given": "Index endpoint supports only GET.",
+            "then": "Error 405 is returned.",
+            "when": "DELETE /events is called."
+          },
+          "type": "negative"
         }
       ]
     },
@@ -4572,6 +5145,123 @@
             "when": "Submitting form"
           },
           "type": "negative"
+        },
+        {
+          "description": "Attempt to create an event with an empty request body",
+          "id": "create_event_missing_body",
+          "implementation_id": "eventscontroller_create",
+          "name": "create_event_missing_body",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "POST",
+          "request_url": "/events",
+          "response_body_json": {
+            "errors": {
+              "title": [
+                "can't be blank"
+              ]
+            }
+          },
+          "response_status_code": 422,
+          "test_setup": {
+            "given": "Client submits an empty JSON body",
+            "then": "Validation fails with missing title error",
+            "when": "POST /events is triggered"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "assigned_user_ids is not an array",
+          "id": "create_event_invalid_assigned_user_ids_type",
+          "implementation_id": "eventscontroller_create",
+          "name": "create_event_invalid_assigned_user_ids_type",
+          "request_body_json": {
+            "assigned_user_ids": "not-an-array",
+            "description": "",
+            "title": "Event"
+          },
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "POST",
+          "request_url": "/events",
+          "response_body_json": {
+            "errors": {
+              "assigned_user_ids": [
+                "must be an array"
+              ]
+            }
+          },
+          "response_status_code": 422,
+          "test_setup": {
+            "given": "assigned_user_ids is incorrectly typed",
+            "then": "Error is shown and form re-renders",
+            "when": "Submitting event"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Request contains an unpermitted parameter",
+          "id": "create_event_extra_unpermitted_param",
+          "implementation_id": "eventscontroller_create",
+          "name": "create_event_extra_unpermitted_param",
+          "request_body_json": {
+            "assigned_user_ids": [],
+            "description": "Test",
+            "malicious": "hack",
+            "title": "Event with extra param"
+          },
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "POST",
+          "request_url": "/events",
+          "response_body_json": {
+            "errors": {
+              "base": [
+                "Unpermitted parameters: malicious"
+              ]
+            }
+          },
+          "response_status_code": 422,
+          "test_setup": {
+            "given": "Client includes an unpermitted field",
+            "then": "Server rejects unpermitted parameters",
+            "when": "Submitting request"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Title provided as null",
+          "id": "create_event_null_title",
+          "implementation_id": "eventscontroller_create",
+          "name": "create_event_null_title",
+          "request_body_json": {
+            "assigned_user_ids": [],
+            "description": "Null title",
+            "title": null
+          },
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "POST",
+          "request_url": "/events",
+          "response_body_json": {
+            "errors": {
+              "title": [
+                "can't be blank"
+              ]
+            }
+          },
+          "response_status_code": 422,
+          "test_setup": {
+            "given": "Title is null",
+            "then": "Validation fails",
+            "when": "Submitting event"
+          },
+          "type": "negative"
         }
       ]
     },
@@ -4806,6 +5496,78 @@
             "when": "Edit endpoint called"
           },
           "type": "edge"
+        },
+        {
+          "description": "Rejects event ID containing invalid characters",
+          "id": "invalid_event_id_format",
+          "implementation_id": "eventscontroller_edit",
+          "name": "invalid_event_id_format",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "GET",
+          "request_url": "/events/!!!/edit",
+          "response_body_json": {
+            "error": "Invalid event ID format"
+          },
+          "response_status_code": 400,
+          "test_setup": {
+            "given": "Event ID contains unsupported characters",
+            "then": "System returns 400",
+            "when": "Edit endpoint requested"
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Loads edit form even when external user list returns empty array",
+          "id": "external_user_list_empty",
+          "implementation_id": "eventscontroller_edit",
+          "name": "external_user_list_empty",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "GET",
+          "request_url": "/events/123/edit",
+          "response_body_json": {
+            "event": {
+              "assigned_users": [],
+              "description": "Sample",
+              "id": "123",
+              "title": "Event A"
+            },
+            "users": []
+          },
+          "response_status_code": 200,
+          "test_setup": {
+            "given": "Event exists and external users API returns empty list",
+            "then": "Form loads normally",
+            "when": "Edit endpoint requested"
+          },
+          "type": "positive"
+        },
+        {
+          "description": "User missing auth header cannot access edit form",
+          "id": "missing_auth_header",
+          "implementation_id": "eventscontroller_edit",
+          "name": "missing_auth_header",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "GET",
+          "request_url": "/events/123/edit",
+          "response_body_json": {
+            "error": "Unauthorized"
+          },
+          "response_status_code": 401,
+          "test_setup": {
+            "given": "User is not authenticated",
+            "then": "System returns 401",
+            "when": "Edit endpoint requested"
+          },
+          "type": "negative"
         }
       ]
     },
@@ -5241,36 +6003,13 @@
           "request_method": "DELETE",
           "request_url": "/events/invalid-id",
           "response_body_json": {
-            "error": "Invalid event ID format"
+            "error": "Event not found"
           },
-          "response_status_code": 400,
+          "response_status_code": 404,
           "test_setup": {
             "given": "Invalid ID format is provided.",
-            "then": "400 validation error is returned.",
+            "then": "Record lookup fails and 404 is returned.",
             "when": "DELETE /events/invalid-id is called."
-          },
-          "type": "negative"
-        },
-        {
-          "description": "Attempt to delete an event without proper permissions.",
-          "id": "delete_event_no_permissions",
-          "implementation_id": "eventscontroller_destroy",
-          "name": "delete_event_no_permissions",
-          "request_body_json": {},
-          "request_headers": {
-            "Content-Type": "application/json",
-            "X-User-Role": "viewer"
-          },
-          "request_method": "DELETE",
-          "request_url": "/events/123",
-          "response_body_json": {
-            "error": "Forbidden"
-          },
-          "response_status_code": 403,
-          "test_setup": {
-            "given": "Authenticated user has viewer role without delete permissions.",
-            "then": "403 forbidden error returned.",
-            "when": "DELETE /events/123 is called."
           },
           "type": "negative"
         },
@@ -5292,81 +6031,10 @@
           "response_status_code": 302,
           "test_setup": {
             "given": "An event exists with assigned users.",
-            "then": "Event is deleted and assignments are removed as part of the deletion.",
+            "then": "Event is deleted.",
             "when": "DELETE /events/456 is called."
           },
           "type": "positive"
-        },
-        {
-          "description": "Reject delete request when confirmation is missing per business rules.",
-          "id": "delete_event_confirmation_required",
-          "implementation_id": "eventscontroller_destroy",
-          "name": "delete_event_confirmation_required",
-          "request_body_json": {
-            "confirmed": false
-          },
-          "request_headers": {
-            "Content-Type": "application/json"
-          },
-          "request_method": "DELETE",
-          "request_url": "/events/789",
-          "response_body_json": {
-            "error": "Deletion requires explicit user confirmation"
-          },
-          "response_status_code": 400,
-          "test_setup": {
-            "given": "Business rules require delete confirmation.",
-            "then": "400 error is returned.",
-            "when": "DELETE is attempted without confirmation."
-          },
-          "type": "negative"
-        },
-        {
-          "description": "Delete request succeeds when proper confirmation flag is present.",
-          "id": "delete_event_with_confirmation",
-          "implementation_id": "eventscontroller_destroy",
-          "name": "delete_event_with_confirmation",
-          "request_body_json": {
-            "confirmed": true
-          },
-          "request_headers": {
-            "Content-Type": "application/json"
-          },
-          "request_method": "DELETE",
-          "request_url": "/events/789",
-          "response_body_json": {
-            "notice": "Event was successfully removed.",
-            "redirect_to": "/events"
-          },
-          "response_status_code": 302,
-          "test_setup": {
-            "given": "Confirmation flag provided.",
-            "then": "Event is deleted.",
-            "when": "DELETE /events/789 is called."
-          },
-          "type": "positive"
-        },
-        {
-          "description": "Simulate internal DB error on deletion attempt.",
-          "id": "delete_event_database_failure",
-          "implementation_id": "eventscontroller_destroy",
-          "name": "delete_event_database_failure",
-          "request_body_json": {},
-          "request_headers": {
-            "Content-Type": "application/json"
-          },
-          "request_method": "DELETE",
-          "request_url": "/events/555",
-          "response_body_json": {
-            "error": "Internal server error"
-          },
-          "response_status_code": 500,
-          "test_setup": {
-            "given": "Event exists but DB destroy operation fails.",
-            "then": "500 internal error returned.",
-            "when": "DELETE /events/555 is called."
-          },
-          "type": "negative"
         },
         {
           "description": "Delete an event using smallest valid UUID alphabetically.",
@@ -5413,6 +6081,28 @@
             "when": "DELETE is executed."
           },
           "type": "edge"
+        },
+        {
+          "description": "Reject non-DELETE methods on the destroy endpoint.",
+          "id": "delete_event_method_not_allowed",
+          "implementation_id": "eventscontroller_destroy",
+          "name": "delete_event_method_not_allowed",
+          "request_body_json": {},
+          "request_headers": {
+            "Content-Type": "application/json"
+          },
+          "request_method": "POST",
+          "request_url": "/events/123",
+          "response_body_json": {
+            "error": "Method Not Allowed"
+          },
+          "response_status_code": 405,
+          "test_setup": {
+            "given": "Client attempts unsupported HTTP method for deletion.",
+            "then": "405 method not allowed is returned.",
+            "when": "POST /events/123 is called."
+          },
+          "type": "negative"
         }
       ]
     }
