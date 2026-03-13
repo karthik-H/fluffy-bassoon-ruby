@@ -183,7 +183,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/function_event_assigned_user_ids.rb"
     },
     {
       "implementation_id": "function_event_assigned_user_ids_setter",
@@ -464,7 +465,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/function_event_assigned_user_ids_setter.rb"
     },
     {
       "implementation_id": "function_event_assigned_users",
@@ -613,7 +615,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/function_event_assigned_users.rb"
     },
     {
       "implementation_id": "function_event_assigned_user_count",
@@ -762,7 +765,8 @@
           },
           "type": "positive"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/function_event_assigned_user_count.rb"
     },
     {
       "implementation_id": "controller_events_index",
@@ -935,7 +939,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_index.rb"
     },
     {
       "implementation_id": "controller_events_show",
@@ -1269,7 +1274,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_new.rb"
     },
     {
       "implementation_id": "controller_events_edit",
@@ -1454,7 +1460,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_edit.rb"
     },
     {
       "implementation_id": "controller_events_create",
@@ -1848,7 +1855,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_update.rb"
     },
     {
       "implementation_id": "controller_events_destroy",
@@ -2021,7 +2029,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_destroy.rb"
     },
     {
       "implementation_id": "controller_events_set_event",
@@ -2741,7 +2750,8 @@
           },
           "type": "positive"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/controller_events_fetch_users.rb"
     },
     {
       "implementation_id": "service_jsonplaceholder_fetch_users",
@@ -2986,7 +2996,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/service_jsonplaceholder_fetch_users.rb"
     },
     {
       "implementation_id": "jsonplaceholderservice_fetch_user",
@@ -3207,7 +3218,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/jsonplaceholderservice_fetch_user.rb"
     }
   ],
   "component": [
@@ -3604,7 +3616,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/component_events_breadcrumbs.rb"
     },
     {
       "implementation_id": "component_events_flash_messages",
@@ -3825,7 +3838,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/component_events_flash_messages.rb"
     },
     {
       "implementation_id": "component_events_list",
@@ -4082,7 +4096,8 @@
           },
           "type": "edge"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/component_events_list.rb"
     },
     {
       "implementation_id": "component_events_detail",
