@@ -1,0 +1,201 @@
+{
+  "task_5124983147_20260211210101": {
+    "implementation": [
+      {
+        "How_is_it_connected_to_implementation": "Renders the navigation header showing 'Event Manager' as the logo/title, with links to 'All Events' and 'New Event'. Highlights the active nav link based on the current request path using an inline conditional CSS class.",
+        "file_path": "app/views/layouts/application.html.erb",
+        "id": "application_html_erb_header_navigation",
+        "name": "application.html.erb (Header & Navigation)",
+        "pseudo_code": "RENDER HTML layout\n  HEAD: title = 'Event Manager', CSRF tags, inline CSS styles\n  BODY:\n    HEADER with class 'header':\n      LINK 'Event Manager' -> root_path (logo)\n      NAV links:\n        LINK 'All Events' -> events_path\n          IF request.path == events_path OR root_path THEN add 'active' class\n        LINK 'New Event' -> new_event_path\n          IF request.path == new_event_path THEN add 'active' class\n    Breadcrumbs section (see below)\n    MAIN content:\n      IF notice present: render green .notice paragraph\n      IF alert present: render red .alert paragraph\n      YIELD (page-specific content)",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Renders breadcrumb navigation beneath the header. Displays clickable path segments for Home, Events, and the current page (event title or action label). Parent segments are always clickable links.",
+        "file_path": "app/views/layouts/application.html.erb",
+        "id": "application_html_erb_breadcrumbs",
+        "name": "application.html.erb (Breadcrumbs)",
+        "pseudo_code": "RENDER breadcrumb list:\n  ITEM: LINK 'Home' -> root_path (always present)\n  IF request.path != root_path AND != events_path:\n    ITEM: LINK 'Events' -> events_path\n  IF path includes '/events/new':\n    ITEM: SPAN 'New Event' (current, not a link)\n  ELSE IF path matches /events/:id/edit:\n    ITEM: LINK @event.title -> event_path(@event) (if @event present)\n    ITEM: SPAN 'Edit' (current, not a link)\n  ELSE IF path matches /events/:id (not edit):\n    IF @event present:\n      ITEM: SPAN @event.title (current, not a link)",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Displays flash messages at the top of the main content area. Success/notice messages are shown in green (.notice class); error/alert messages are shown in red (.alert class), both with CSS animations.",
+        "file_path": "app/views/layouts/application.html.erb",
+        "id": "application_html_erb_flash_messages",
+        "name": "application.html.erb (Flash Messages)",
+        "pseudo_code": "INSIDE main content container:\n  IF flash[:notice] present:\n    RENDER <p class='notice'> with notice text (green background, green left border)\n  IF flash[:alert] present:\n    RENDER <p class='alert'> with alert text (red background, red left border)",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Displays the list of all events sorted by newest first (ordered by controller). Each event item shows title, assigned user count badge, description (or 'No description'), and action buttons: View, Edit, Remove. Includes a confirmation dialog for removal. Shows empty-state message with link to create first event when no events exist.",
+        "file_path": "app/views/events/index.html.erb",
+        "id": "index_html_erb_event_list",
+        "name": "index.html.erb (Event List)",
+        "pseudo_code": "RENDER h1 'Events'\nRENDER LINK 'Add New Event' -> new_event_path\n\nFOR EACH event IN @events:\n  RENDER event-item:\n    SHOW event.title\n    IF event.assigned_user_count > 0:\n      SHOW badge with count\n    SHOW event.description OR 'No description'\n    ACTIONS:\n      LINK 'View' -> event_path(event)\n      LINK 'Edit' -> edit_event_path(event)\n      FORM DELETE event_path(event) with onsubmit confirm('Are you sure?'):\n        SUBMIT 'Remove'\n\nIF @events is empty:\n  RENDER message 'No events yet.' with LINK 'Add your first event' -> new_event_path",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Renders the detailed view of an event, showing title, description (or 'No description'), and assigned user names retrieved from external service. Shows 'No users assigned' message when empty. Provides Edit, Back to Events, and Remove action buttons with confirmation for removal.",
+        "file_path": "app/views/events/show.html.erb",
+        "id": "show_html_erb_event_detail",
+        "name": "show.html.erb (Event Detail)",
+        "pseudo_code": "RENDER h1 @event.title\nRENDER @event.description OR 'No description'\n\nSECTION 'Assigned Users':\n  assigned_users = @event.assigned_users\n  IF assigned_users present:\n    FOR EACH user IN assigned_users:\n      RENDER badge with user avatar initial and user['name']\n  ELSE:\n    RENDER 'No users assigned to this event.'\n\nACTIONS:\n  LINK 'Edit' -> edit_event_path(@event)\n  LINK 'Back to Events' -> events_path\n  FORM DELETE event_path(@event) with onsubmit confirm('Are you sure?'):\n    SUBMIT 'Remove'",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Renders the 'Add New Event' page heading and delegates form rendering to the shared _form partial, passing the new @event instance.",
+        "file_path": "app/views/events/new.html.erb",
+        "id": "new_html_erb_new_event_page",
+        "name": "new.html.erb (New Event Page)",
+        "pseudo_code": "RENDER h1 'Add New Event'\nRENDER partial 'form' with event: @event",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Renders the 'Edit Event' page heading and delegates form rendering to the shared _form partial, passing the existing @event instance for pre-population.",
+        "file_path": "app/views/events/edit.html.erb",
+        "id": "edit_html_erb_edit_event_page",
+        "name": "edit.html.erb (Edit Event Page)",
+        "pseudo_code": "RENDER h1 'Edit Event'\nRENDER partial 'form' with event: @event",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Shared form partial used for both creating and editing events. Provides title (required) and description (optional) fields, plus a user assignment section with a search input, scrollable checkbox list showing name and email from externally loaded users, multi-select checkboxes, and a live selection counter. Also renders Cancel link back to events list.",
+        "file_path": "app/views/events/_form.html.erb",
+        "id": "form_html_erb_event_form",
+        "name": "_form.html.erb (Event Form)",
+        "pseudo_code": "RENDER form for event model:\n  IF event has errors:\n    RENDER error messages in .alert div\n\n  FIELD: text_field :title (required)\n  FIELD: text_area :description (optional)\n\n  FIELD 'Assign Users':\n    HIDDEN FIELD event[assigned_user_ids][] = '' (ensures empty array on no selection)\n    user-assignment-container:\n      SEARCH INPUT #user-search (for filtering)\n      user-list-container (scrollable):\n        IF @users present:\n          FOR EACH user IN @users:\n            LABEL with checkbox:\n              check_box_tag event[assigned_user_ids][], user['id']\n                CHECKED IF user id in event.assigned_user_ids\n              SHOW user['name'] and user['email']\n        ELSE:\n          SHOW 'Loading users...'\n      COUNTER: SPAN #selected-count + ' user(s) selected'\n\n  ACTIONS:\n    SUBMIT button\n    LINK 'Cancel' -> events_path\n\n  JAVASCRIPT:\n    ON DOMContentLoaded:\n      FUNCTION updateSelectedCount():\n        count = number of checked .user-checkbox elements\n        SET #selected-count text to count\n      FUNCTION filterUsers():\n        searchTerm = #user-search value (lowercase)\n        FOR EACH checkbox:\n          label = closest .user-checkbox-item\n          IF userName or userEmail includes searchTerm:\n            SHOW label\n          ELSE:\n            HIDE label\n      BIND #user-search 'input' -> filterUsers\n      BIND each checkbox 'change' -> updateSelectedCount\n      CALL updateSelectedCount() on load",
+        "type": "component"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles GET /events. Fetches all events sorted by created_at descending (newest first) and assigns to @events for the index view.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_index",
+        "name": "EventsController#index",
+        "pseudo_code": "GET /events:\n  @events = Event.all.order(created_at: :desc)\n  RENDER index view",
+        "type": "endpoint"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles GET /events/:id. Uses before_action set_event to load @event and fetch_users to load @users for the show view (users needed for potential display context).",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_show",
+        "name": "EventsController#show",
+        "pseudo_code": "GET /events/:id:\n  before_action: @event = Event.find(params[:id])\n  before_action: @users = JsonplaceholderService.fetch_users\n  RENDER show view",
+        "type": "endpoint"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles GET /events/new. Initializes a new empty Event and fetches the external user list for the user assignment form section.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_new",
+        "name": "EventsController#new",
+        "pseudo_code": "GET /events/new:\n  before_action: @users = JsonplaceholderService.fetch_users\n  @event = Event.new\n  RENDER new view",
+        "type": "endpoint"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles POST /events. Creates a new event with permitted params (title, description, assigned_user_ids). On success, redirects to the event's show page with a green notice. On failure, re-fetches users and re-renders the new form with errors.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_create",
+        "name": "EventsController#create",
+        "pseudo_code": "POST /events:\n  @event = Event.new(event_params)\n  IF @event.save:\n    REDIRECT to @event with notice: 'Event was successfully created.'\n  ELSE:\n    fetch_users (reload @users)\n    RENDER :new with status 422",
+        "type": "endpoint"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles GET /events/:id/edit. Loads the existing event via set_event before_action and fetches external users for the form.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_edit",
+        "name": "EventsController#edit",
+        "pseudo_code": "GET /events/:id/edit:\n  before_action: @event = Event.find(params[:id])\n  before_action: @users = JsonplaceholderService.fetch_users\n  RENDER edit view",
+        "type": "endpoint"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles PATCH/PUT /events/:id. Updates the event with new params. On success, redirects to event show page with green notice. On failure, re-fetches users and re-renders edit form.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_update",
+        "name": "EventsController#update",
+        "pseudo_code": "PATCH /events/:id:\n  before_action: @event = Event.find(params[:id])\n  IF @event.update(event_params):\n    REDIRECT to @event with notice: 'Event was successfully updated.'\n  ELSE:\n    fetch_users (reload @users)\n    RENDER :edit with status 422",
+        "type": "endpoint"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Handles DELETE /events/:id. Deletes the event and redirects to the events list with a green success notice.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_destroy",
+        "name": "EventsController#destroy",
+        "pseudo_code": "DELETE /events/:id:\n  before_action: @event = Event.find(params[:id])\n  @event.destroy\n  REDIRECT to events_url with notice: 'Event was successfully removed.'",
+        "type": "endpoint"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Strong parameters method that permits title, description, and assigned_user_ids array. Sanitizes assigned_user_ids by removing blank entries and converting to integers.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_event_params",
+        "name": "EventsController#event_params",
+        "pseudo_code": "FUNCTION event_params:\n  permitted = params.require(:event).permit(:title, :description, assigned_user_ids: [])\n  IF permitted[:assigned_user_ids] present:\n    permitted[:assigned_user_ids] = reject blank entries, map to integers\n  ELSE:\n    permitted[:assigned_user_ids] = []\n  RETURN permitted",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Private method called as before_action for new, edit, and show actions. Calls JsonplaceholderService to load external user list into @users, making it available to form views.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_fetch_users",
+        "name": "EventsController#fetch_users",
+        "pseudo_code": "FUNCTION fetch_users:\n  @users = JsonplaceholderService.fetch_users",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Private before_action method that loads a specific Event by ID for show, edit, update, and destroy actions.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_set_event",
+        "name": "EventsController#set_event",
+        "pseudo_code": "FUNCTION set_event:\n  @event = Event.find(params[:id])",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Fetches the full list of users from the external JSONPlaceholder API (https://jsonplaceholder.typicode.com/users). Results are cached for 5 minutes. Returns an array of user hashes with name, email, id, etc. Returns empty array on failure. This is the externally loaded user list used for assignment on event forms.",
+        "file_path": "app/services/jsonplaceholder_service.rb",
+        "id": "jsonplaceholderservice_fetch_users",
+        "name": "JsonplaceholderService.fetch_users",
+        "pseudo_code": "FUNCTION fetch_users:\n  CHECK Rails cache for 'jsonplaceholder_users' (expires_in: 5 minutes):\n    IF cache miss:\n      uri = URI('https://jsonplaceholder.typicode.com/users')\n      response = Net::HTTP.get_response(uri)\n      IF response.code == '200':\n        RETURN JSON.parse(response.body)\n      ELSE:\n        RETURN []\n    ON error:\n      LOG error message\n      RETURN []",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Fetches a single user by ID from the external JSONPlaceholder API. Results are cached per user for 5 minutes. Used by Event#assigned_users to resolve each assigned user ID to full user data for display in event show view.",
+        "file_path": "app/services/jsonplaceholder_service.rb",
+        "id": "jsonplaceholderservice_fetch_user",
+        "name": "JsonplaceholderService.fetch_user",
+        "pseudo_code": "FUNCTION fetch_user(user_id):\n  CHECK Rails cache for 'jsonplaceholder_user_{user_id}' (expires_in: 5 minutes):\n    IF cache miss:\n      uri = URI('https://jsonplaceholder.typicode.com/users/{user_id}')\n      response = Net::HTTP.get_response(uri)\n      IF response.code == '200':\n        RETURN JSON.parse(response.body)\n      ELSE:\n        RETURN nil\n    ON error:\n      LOG error message\n      RETURN nil",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Custom getter that reads the assigned_user_ids column (stored as JSON text) and parses it into a Ruby array. Returns empty array if blank. Enables persistence of user assignments across events.",
+        "file_path": "app/models/event.rb",
+        "id": "event_assigned_user_ids_getter",
+        "name": "Event#assigned_user_ids (getter)",
+        "pseudo_code": "FUNCTION assigned_user_ids:\n  value = read_attribute(:assigned_user_ids)\n  IF value is blank:\n    RETURN []\n  RETURN JSON.parse(value)\n  ON parse error:\n    RETURN []",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Custom setter that serializes the assigned_user_ids array to JSON string before storing in the database text column, ensuring proper persistence.",
+        "file_path": "app/models/event.rb",
+        "id": "event_assigned_user_ids_setter",
+        "name": "Event#assigned_user_ids= (setter)",
+        "pseudo_code": "FUNCTION assigned_user_ids=(value):\n  IF value is an Array:\n    write_attribute(:assigned_user_ids, value.to_json)\n  ELSE:\n    write_attribute(:assigned_user_ids, value)",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Resolves assigned user IDs to full user objects by calling JsonplaceholderService.fetch_user for each stored ID. Used in the show view to display assigned user names. Returns empty array if no IDs assigned.",
+        "file_path": "app/models/event.rb",
+        "id": "event_assigned_users",
+        "name": "Event#assigned_users",
+        "pseudo_code": "FUNCTION assigned_users:\n  IF assigned_user_ids is blank:\n    RETURN []\n  FOR EACH id IN assigned_user_ids:\n    CALL JsonplaceholderService.fetch_user(id)\n  RETURN compact results (remove nils)",
+        "type": "function"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Returns the count of assigned user IDs without fetching full user objects. Used in the event list view to display the user count badge next to each event title.",
+        "file_path": "app/models/event.rb",
+        "id": "event_assigned_user_count",
+        "name": "Event#assigned_user_count",
+        "pseudo_code": "FUNCTION assigned_user_count:\n  RETURN size of assigned_user_ids array OR 0 if nil",
+        "type": "function"
+      }
+    ],
+    "missing_implementations": [
+      "Event removal via list/detail prompts for confirmation; upon confirming, deletes event, returns to list view, and displays status message (green or red based on outcome). The destroy action in EventsController always redirects with a green notice on success but does not handle failure cases (e.g., when destroy returns false) with a red error/alert flash message. There is no conditional logic to set flash[:alert] if the deletion fails."
+    ]
+  }
+}
