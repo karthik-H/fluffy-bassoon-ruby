@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem "rails", "~> 7.1"
 gem "sqlite3", "~> 1.4"
+gem "pg"
 gem "puma", "~> 6.0"
 gem "jbuilder"
 gem "minitest", "~> 5.25"
