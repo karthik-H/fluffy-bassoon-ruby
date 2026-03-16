@@ -2294,7 +2294,8 @@
           },
           "type": "negative"
         }
-      ]
+      ],
+      "test_path": ".codevalid/tests/task_5124983147_20260211210101/event_title_validation.rb"
     }
   ],
   "component": [
