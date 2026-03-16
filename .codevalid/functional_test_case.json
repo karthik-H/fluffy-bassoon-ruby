@@ -2110,6 +2110,191 @@
           "type": "positive"
         }
       ]
+    },
+    {
+      "implementation_id": "event_title_validation",
+      "test_cases": [
+        {
+          "description": "Event creation succeeds when a non-empty title is provided.",
+          "id": "valid_title_on_create",
+          "implementation_id": "event_title_validation",
+          "name": "valid_title_on_create",
+          "test_setup": {
+            "given": "An Event object with title set to 'Conference' and optional fields provided or empty.",
+            "then": "Validation passes and the event is persisted successfully.",
+            "when": "The create/save operation is executed."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Event creation fails when the title is blank.",
+          "id": "blank_title_on_create",
+          "implementation_id": "event_title_validation",
+          "name": "blank_title_on_create",
+          "test_setup": {
+            "given": "An Event object with title set to an empty string ''.",
+            "then": "Validation fails, error 'Title can't be blank' is added, and the event is not saved.",
+            "when": "The create/save operation is executed."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Event creation fails when the title is null.",
+          "id": "nil_title_on_create",
+          "implementation_id": "event_title_validation",
+          "name": "nil_title_on_create",
+          "test_setup": {
+            "given": "An Event object with title set to null.",
+            "then": "Validation fails, error 'Title can't be blank' is added, and the event is not saved.",
+            "when": "The create/save operation is executed."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Event creation fails when the title contains only whitespace.",
+          "id": "whitespace_title_on_create",
+          "implementation_id": "event_title_validation",
+          "name": "whitespace_title_on_create",
+          "test_setup": {
+            "given": "An Event object with title set to '   '.",
+            "then": "Validation fails because Rails presence validation strips whitespace; event is not saved.",
+            "when": "The create/save operation is executed."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Event update succeeds when the new title is valid.",
+          "id": "valid_title_on_update",
+          "implementation_id": "event_title_validation",
+          "name": "valid_title_on_update",
+          "test_setup": {
+            "given": "An existing Event object with a valid title. Update assigns 'Updated Title'.",
+            "then": "Event is updated and persisted successfully.",
+            "when": "The update/save operation is executed."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "Event update fails if the title is set to blank.",
+          "id": "blank_title_on_update",
+          "implementation_id": "event_title_validation",
+          "name": "blank_title_on_update",
+          "test_setup": {
+            "given": "An existing Event object. Update sets title to ''.",
+            "then": "Validation fails and update is rejected with 'Title can't be blank'.",
+            "when": "The update/save operation is executed."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Event update fails when the title is set to null.",
+          "id": "nil_title_on_update",
+          "implementation_id": "event_title_validation",
+          "name": "nil_title_on_update",
+          "test_setup": {
+            "given": "An existing Event object. Update sets title to null.",
+            "then": "Validation fails, error is added, event remains unchanged.",
+            "when": "The update/save operation is executed."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Event saves successfully when title is at maximum acceptable length (assuming DB limit if any).",
+          "id": "max_length_title_boundary",
+          "implementation_id": "event_title_validation",
+          "name": "max_length_title_boundary",
+          "test_setup": {
+            "given": "An Event with title set to a 255-character string.",
+            "then": "Validation passes and event is saved unless model/db has additional constraints.",
+            "when": "Save operation is executed."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Validation fails when title appears non-empty but becomes blank after trimming.",
+          "id": "empty_string_after_strip",
+          "implementation_id": "event_title_validation",
+          "name": "empty_string_after_strip",
+          "test_setup": {
+            "given": "An Event with title ' \\n\\t '.",
+            "then": "Rails presence validation treats it as blank; event is not saved.",
+            "when": "Save operation is executed."
+          },
+          "type": "edge"
+        },
+        {
+          "description": "Ensures proper error message is attached when validation fails.",
+          "id": "ensure_error_message_attached",
+          "implementation_id": "event_title_validation",
+          "name": "ensure_error_message_attached",
+          "test_setup": {
+            "given": "An Event with blank title.",
+            "then": "Error messages contain 'Title can't be blank'.",
+            "when": "Save or update is attempted."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "Event object should not persist or modify database when title validation fails.",
+          "id": "no_side_effects_on_failed_save",
+          "implementation_id": "event_title_validation",
+          "name": "no_side_effects_on_failed_save",
+          "test_setup": {
+            "given": "An Event with invalid blank title.",
+            "then": "Database record is unchanged or not created; no partial writes occur.",
+            "when": "Save is attempted."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "User with permission to edit events can successfully update title when valid.",
+          "id": "role_check_editor_can_edit_title",
+          "implementation_id": "event_title_validation",
+          "name": "role_check_editor_can_edit_title",
+          "test_setup": {
+            "given": "User has event-edit permissions; Event has valid new title.",
+            "then": "Validation passes and event updates successfully.",
+            "when": "Update is executed."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "User without edit permissions cannot update title regardless of title validity.",
+          "id": "role_check_viewer_cannot_edit_title",
+          "implementation_id": "event_title_validation",
+          "name": "role_check_viewer_cannot_edit_title",
+          "test_setup": {
+            "given": "User has read-only permissions and attempts to update an event title.",
+            "then": "System rejects with permission error before validation occurs.",
+            "when": "Update operation is requested."
+          },
+          "type": "negative"
+        },
+        {
+          "description": "State transition from unsaved to saved only occurs with valid title.",
+          "id": "state_transition_new_to_saved",
+          "implementation_id": "event_title_validation",
+          "name": "state_transition_new_to_saved",
+          "test_setup": {
+            "given": "Unsaved Event with valid title.",
+            "then": "Status changes to persisted.",
+            "when": "Save is executed."
+          },
+          "type": "positive"
+        },
+        {
+          "description": "State remains unchanged on failed update due to blank title.",
+          "id": "state_transition_saved_to_saved_fail",
+          "implementation_id": "event_title_validation",
+          "name": "state_transition_saved_to_saved_fail",
+          "test_setup": {
+            "given": "Existing Event. Update sets title to blank.",
+            "then": "State does not change; persisted data remains original.",
+            "when": "Save/update is executed."
+          },
+          "type": "negative"
+        }
+      ]
     }
   ],
   "component": [
