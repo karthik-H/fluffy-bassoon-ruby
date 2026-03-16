@@ -5,6 +5,7 @@ gem "sqlite3", "~> 1.4"
 gem "puma", "~> 6.0"
 gem "jbuilder"
 gem "minitest", "~> 5.25"
+gem "pg"
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ]
