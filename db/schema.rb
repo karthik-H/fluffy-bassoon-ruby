@@ -83,6 +83,13 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_29_000001) do
     t.datetime "updated_at", precision: nil, default: -> { "now()" }
   end
 
+  create_table "pull_request_analytics", id: :serial, force: :cascade do |t|
+    t.datetime "timestamp", precision: nil, default: -> { "now()" }, null: false
+    t.integer "pull_request_id", null: false
+    t.string "git_repo_url", limit: 500, null: false
+    t.string "action", limit: 50, null: false
+  end
+
   create_table "repo_branch_status", primary_key: ["repo", "branch"], force: :cascade do |t|
     t.string "repo", limit: 500, null: false
     t.string "branch", limit: 255, null: false
