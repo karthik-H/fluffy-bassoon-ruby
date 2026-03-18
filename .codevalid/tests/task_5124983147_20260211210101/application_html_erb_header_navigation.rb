@@ -316,7 +316,8 @@ class ApplicationHtmlErbHeaderNavigationTest < ActionDispatch::IntegrationTest
     assert_not_nil breadcrumbs_el, "Expected a .breadcrumbs element"
 
     # Verify structural order: header before breadcrumbs before main
-    body_children = doc.css("body > *").map { |el| el.name + (el["class"] ? ".#{el['class'].split.first}" : "") }
+    body_children = doc.css("body > *").map { |el| el.name + (el["class"] ? ".#{el['class'].
+split.first}" : "") }
     header_index     = body_children.index { |c| c.start_with?("header") }
     breadcrumb_index = body_children.index { |c| c.include?("breadcrumbs") }
     main_index       = body_children.index { |c| c.start_with?("main") }
