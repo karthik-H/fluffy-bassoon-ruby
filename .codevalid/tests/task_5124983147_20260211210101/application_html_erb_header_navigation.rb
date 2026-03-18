@@ -18,12 +18,36 @@ class ApplicationHtmlErbHeaderNavigationTest < ActionDispatch::IntegrationTest
   end
 
   # ---------------------------------------------------------------------------
-  # Test Case 1: header_renders_logo
+  # Test Case 10: alert_message_display
   # ---------------------------------------------------------------------------
-  test "header_renders_logo" do
+  test "alert_message_display" do
+    # Set a flash[:alert] directly to test layout rendering
     stub_users do
-      get root_path
+      get root_path, params: { alert: "Error saving event" }
     end
+    assert_response :success
+
+    alert_el = doc.at_css("p.alert")
+    assert_not_nil alert_el, "Expected a <p class='alert'> element when alert is present"
+    assert_equal "Error saving event", alert_el.text.strip
+    assert_includes alert_el["class"].to_s.split, "alert",
+                    "Expected paragraph to have 'alert' class"
+  end
+
+  # ---------------------------------------------------------------------------
+  # Test Case 11: no_notice_or_alert
+  # ---------------------------------------------------------------------------
+  test "no_notice_or_alert" do
+    stub_users do
+      get events_path
+    end
+    assert_response :success
+
+    assert_nil doc.at_css("p.notice"),
+               "Expected no .notice paragraph when flash[:notice] is absent"
+    assert_nil doc.at_css("p.alert"),
+               "Expected no .alert paragraph when flash[:alert] is absent"
+  end
     assert_response :success
 
     logo = doc.at_css("header.header a.logo")
