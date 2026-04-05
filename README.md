@@ -21,7 +21,7 @@ Event Manager lets you create and manage **events**. Each event has a title and 
   - Title and description
   - **Assigned users** — the names of everyone assigned to this event (or “No users assigned” if none)
   - Buttons: **Edit**, **Back to Events**, **Remove**
-
+ 
 ### Create a new event
 
 - You can create an event by going to **New Event** (from the header or the link on the list).
