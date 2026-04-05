@@ -36,7 +36,7 @@ Event Manager lets you create and manage **events**. Each event has a title and 
 - From the event list or the event detail page, you can **Edit** an event.
 - You can change the title, description, and assigned users (add or remove people).
 - You **Save** to apply changes or **Cancel** to go back without saving. You see a success message when the update works.
-- Once user is assigned don't let it change
+- Once user is assigned don't let it change 
 
 ### Remove an event 
 
