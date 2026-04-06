@@ -205,5 +205,257 @@
     "missing_implementations": [
       "Event removal via list/detail prompts for confirmation; upon confirming, deletes event, returns to list view, and displays status message (green or red based on outcome). The destroy action in EventsController always redirects with a green notice regardless of whether destroy succeeds or fails. There is no conditional branch to set flash[:alert] if @event.destroy returns false."
     ]
+  },
+  "task_6135689484_20260405181119": {
+    "implementation": [
+      {
+        "How_is_it_connected_to_implementation": "The Event model at line 2 defines 'validates :title, presence: true' which enforces that the title field is required. This validation is triggered when EventsController#create attempts to save an Event object, preventing event creation without a title as required by AC 7.",
+        "file_path": "app/models/event.rb",
+        "id": "event_model_validation",
+        "name": "Event Model Validation",
+        "pseudo_code": "class Event < ApplicationRecord\n  validates :title, presence: true\nend\n\n# When Event.new(params).save is called:\n# - If title is blank, validation fails and save returns false\n# - If title is present, validation passes and save proceeds",
+        "type": "Business Logic"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 10-12 implement a custom setter for assigned_user_ids that converts arrays to JSON before persisting to database. This allows 0, 1, or multiple user selections to be stored and retrieved as required by AC 9 and 13.",
+        "file_path": "app/models/event.rb",
+        "id": "event_model_user_id_serialization",
+        "name": "Event Model User ID Serialization",
+        "pseudo_code": "def assigned_user_ids=(value)\n  # Convert array to JSON string for storage\n  write_attribute(:assigned_user_ids, value.is_a?(Array) ? value.to_json : value)\nend\n\n# Also handles reading with custom getter (lines 4-8):\ndef assigned_user_ids\n  value = read_attribute(:assigned_user_ids)\n  return [] if value.blank?\n  JSON.parse(value) rescue []\nend",
+        "type": "Business Logic"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 49-58 implement strong parameter filtering and processing. Accepts :title (required), :description (optional), and assigned_user_ids array. Removes blank strings and converts to integers. This validates the form submission structure and ensures optional description field is supported per AC 8 and 10.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_event_params",
+        "name": "EventsController#event_params",
+        "pseudo_code": "def event_params\n  # Permit title, description, and array of user IDs\n  permitted = params.require(:event).permit(:title, :description, assigned_user_ids: [])\n  \n  # Process assigned_user_ids array\n  if permitted[:assigned_user_ids].present?\n    # Remove empty strings and convert to integers\n    permitted[:assigned_user_ids] = permitted[:assigned_user_ids]\n      .reject(&:blank?)\n      .map(&:to_i)\n  else\n    # Default to empty array if not provided\n    permitted[:assigned_user_ids] = []\n  end\n  \n  return permitted\nend",
+        "type": "API"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 19-27 handle the POST request to create a new event. Creates Event object with validated params, saves to database with validation, and on success displays a notice message and redirects to the event detail page. On failure, re-renders form with errors. This fulfills AC 10, 11, 13, and 14.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_create",
+        "name": "EventsController#create",
+        "pseudo_code": "def create\n  # Create new Event with validated parameters\n  @event = Event.new(event_params)\n  \n  if @event.save\n    # Success: display notice and navigate to event detail\n    redirect_to @event, notice: \"Event was successfully created.\"\n  else\n    # Failure: fetch users for form re-render and show errors\n    fetch_users\n    render :new, status: :unprocessable_entity\n  end\nend",
+        "type": "API"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 60-62 define a before_action callback (line 3) that loads available users from external API into @users instance variable for form rendering. Called on new and edit actions. Fulfills AC 1 and 6 by ensuring user list is loaded before form displays.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_fetch_users",
+        "name": "EventsController#fetch_users",
+        "pseudo_code": "def fetch_users\n  # Fetch users from external JSONPlaceholder service\n  @users = JsonplaceholderService.fetch_users\nend\n\n# Called via before_action filter (line 3):\nbefore_action :fetch_users, only: [:new, :edit, :show]",
+        "type": "API"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 11-24 implement external API call to JSONPlaceholder service to retrieve all users with 5-minute caching. Returns array of user objects with id, name, email fields. Provides the external user list required by AC 1, 2, and 4.",
+        "file_path": "app/services/jsonplaceholder_service.rb",
+        "id": "jsonplaceholderservice_fetch_users",
+        "name": "JsonplaceholderService#fetch_users",
+        "pseudo_code": "def self.fetch_users\n  # Check cache first (5-minute duration)\n  Rails.cache.fetch('jsonplaceholder_users', expires_in: CACHE_DURATION) do\n    uri = URI(\"#{BASE_URL}/users\")\n    response = Net::HTTP.get_response(uri)\n    \n    if response.code == '200'\n      # Parse and return user array\n      JSON.parse(response.body)\n    else\n      # Return empty array on failure\n      return []\n    end\n  rescue => e\n    # Log error and return empty array\n    Rails.logger.error(\"Error fetching users: #{e.message}\")\n    return []\n  end\nend",
+        "type": "Business Logic"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 1-92 implement the complete event creation form. Includes: error display (lines 2-10), title field (lines 12-15), description field (lines 17-20), user search/selection section (lines 22-49), and action buttons (lines 52-55). Uses JavaScript to implement search filtering and selection counter. Fulfills AC 1, 3, 4, 5, 6, 8, and 9.",
+        "file_path": "app/views/events/_form.html.erb",
+        "id": "event_creation_form_template",
+        "name": "Event Creation Form Template",
+        "pseudo_code": "<!-- Form with error display -->\n<form for event>\n  <!-- Display validation errors -->\n  <div if event.errors.any?>\n    <ul of event.errors.full_messages>\n  \n  <!-- Required title field -->\n  <label>Title</label>\n  <input type='text' name='event[title]' placeholder='Event title'>\n  \n  <!-- Optional description field -->\n  <label>Description</label>\n  <textarea name='event[description]' placeholder='Event description'>\n  \n  <!-- User selection section -->\n  <label>Assign Users</label>\n  <input type='text' id='user-search' placeholder='Search users...'>\n  \n  <div class='user-list'>\n    <for each user in @users>\n      <label class='user-item'>\n        <input type='checkbox' name='event[assigned_user_ids][]' value=user.id>\n        <span>user.name - user.email\n  \n  <div id='selected-count'>0 user(s) selected</div>\n  \n  <submit button>\n  <cancel link to events_path>",
+        "type": "Frontend"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 58-92 implement JavaScript functionality for user search filtering. Function filterUsers() at lines 69-82 matches search term against user name and email fields (case-insensitive). Shows/hides user checkbox items based on match. Fulfills AC 5 and 6 by enabling real-time search filtering.",
+        "file_path": "app/views/events/_form.html.erb",
+        "id": "form_search_filtering_javascript",
+        "name": "Form Search Filtering JavaScript",
+        "pseudo_code": "document.addEventListener('DOMContentLoaded', function() {\n  const searchInput = document.getElementById('user-search');\n  const checkboxes = document.querySelectorAll('.user-checkbox');\n  \n  function filterUsers() {\n    const searchTerm = searchInput.value.toLowerCase();\n    \n    checkboxes.forEach(function(checkbox) {\n      const label = checkbox.closest('.user-checkbox-item');\n      const userName = label.querySelector('.user-name').textContent.toLowerCase();\n      const userEmail = label.querySelector('.user-email').textContent.toLowerCase();\n      \n      // Show if name or email contains search term\n      if (userName.includes(searchTerm) || userEmail.includes(searchTerm)) {\n        label.style.display = 'flex';\n      } else {\n        label.style.display = 'none';\n      }\n    });\n  }\n  \n  searchInput.addEventListener('input', filterUsers);\n});",
+        "type": "Frontend"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 58-92 implement JavaScript to update selected user counter. Function updateSelectedCount() at lines 64-67 counts checked checkboxes and updates #selected-count element. Event listeners at lines 86-88 trigger update on checkbox changes. Fulfills AC 4 by displaying counter and updating on selection/deselection.",
+        "file_path": "app/views/events/_form.html.erb",
+        "id": "form_selected_user_counter_javascript",
+        "name": "Form Selected User Counter JavaScript",
+        "pseudo_code": "function updateSelectedCount() {\n  // Count all checked user checkboxes\n  const selected = document.querySelectorAll('.user-checkbox:checked').length;\n  // Update counter display\n  selectedCountEl.textContent = selected;\n}\n\n// Trigger counter update when any checkbox changes\ncheckboxes.forEach(function(checkbox) {\n  checkbox.addEventListener('change', updateSelectedCount);\n});\n\n// Initialize counter on page load\nupdateSelectedCount();",
+        "type": "Frontend"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Line 54 implements cancel button that links to events_path. When clicked, navigates user back to events list without submitting form data. Fulfills AC 16 by providing cancel functionality without saving.",
+        "file_path": "app/views/events/_form.html.erb",
+        "id": "form_cancel_button",
+        "name": "Form Cancel Button",
+        "pseudo_code": "<!-- Cancel button that links to events list -->\n<link_to 'Cancel', events_path, class: 'btn btn-secondary'>\n\n# Renders as:\n<a href='/events' class='btn btn-secondary'>Cancel</a>",
+        "type": "Frontend"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 2-10 display validation errors when form submission fails. Shows error messages for failed validations (e.g., missing title). Rendered when EventsController#create re-renders form on validation failure. Fulfills AC 7 by showing that title is required.",
+        "file_path": "app/views/events/_form.html.erb",
+        "id": "form_validation_error_display",
+        "name": "Form Validation Error Display",
+        "pseudo_code": "<!-- Display validation errors if any -->\n<if event.errors.any?>\n  <div class='alert'>\n    <ul>\n      <for each error_message in event.errors.full_messages>\n        <li>error_message</li>",
+        "type": "Frontend"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Line 22 in EventsController#create redirects to event detail page with notice: 'Event was successfully created.' This notice message is passed to the view and rendered in the layout as a flash message. Fulfills AC 11 and 13 by providing success messaging and navigation.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "success_message_redirect",
+        "name": "Success Message Redirect",
+        "pseudo_code": "if @event.save\n  # Redirect with success message\n  redirect_to @event, notice: \"Event was successfully created.\"\nend",
+        "type": "API"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 604-605 in layout render flash notice and alert messages. CSS styling at lines 194-198 displays notices with green gradient background and left border, positioned at top of main content area. Fulfills AC 11 by showing green success message at top of page.",
+        "file_path": "app/views/layouts/application.html.erb",
+        "id": "flash_message_rendering",
+        "name": "Flash Message Rendering",
+        "pseudo_code": "<!-- In main content area -->\n<main class='main-content'>\n  <div class='container'>\n    <!-- Render flash messages at top -->\n    <if notice>\n      <p class='notice'>notice</p>\n    <if alert>\n      <p class='alert'>alert</p>\n    \n    <!-- Page content -->\n    yield\n\n<!-- CSS for green success message -->\n.notice {\n  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);\n  color: #155724;\n  border-left: 4px solid #28a745;\n  padding: 1rem 1.25rem;\n  border-radius: 8px;\n  margin-bottom: 1.5rem;\n}",
+        "type": "Frontend"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 1-28 display event detail page that user is redirected to after successful creation. Shows event title (line 1), description (line 3), and assigned users section (lines 5-20). Uses Event#assigned_users to fetch and display user objects from external API. Fulfills AC 13 by providing navigation destination.",
+        "file_path": "app/views/events/show.html.erb",
+        "id": "event_detail_page",
+        "name": "Event Detail Page",
+        "pseudo_code": "<!-- Display event details -->\n<h1>event.title</h1>\n<p>event.description or 'No description'</p>\n\n<!-- Display assigned users -->\n<div class='assigned-users-section'>\n  <if assigned_users.present?>\n    <for each user in assigned_users>\n      <div class='assigned-user-badge'>\n        <span>user.name</span>\n  <else>\n    <p>No users assigned to this event</p>",
+        "type": "Frontend"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 14-17 define method that fetches full user objects from external API for each assigned user ID. Maps stored user IDs to full user objects with name/email via JsonplaceholderService. Used by event detail page to display assigned user information.",
+        "file_path": "app/models/event.rb",
+        "id": "event_assigned_users_method",
+        "name": "Event#assigned_users Method",
+        "pseudo_code": "def assigned_users\n  # Return empty array if no users assigned\n  return [] if assigned_user_ids.blank?\n  \n  # Map each ID to full user object from external API\n  assigned_user_ids.map { |id| JsonplaceholderService.fetch_user(id) }\n    .compact  # Remove nil entries if user fetch fails\nend",
+        "type": "Business Logic"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 19-21 provide method to get count of assigned users. Returns size of assigned_user_ids array or 0 if nil. Used by event list view to display user count badge.",
+        "file_path": "app/models/event.rb",
+        "id": "event_assigned_user_count_method",
+        "name": "Event#assigned_user_count Method",
+        "pseudo_code": "def assigned_user_count\n  # Return count of assigned user IDs, default 0 if nil\n  assigned_user_ids&.size || 0\nend",
+        "type": "Business Logic"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Lines 4-5 create events table with title field (string, NOT NULL - required) and description field (text, nullable - optional). Timestamps added automatically by migrations. Fulfills AC 1, 7, 8 by supporting required title and optional description storage.",
+        "file_path": "db/migrate/20250128000001_create_events.rb",
+        "id": "events_table_schema",
+        "name": "Events Table Schema",
+        "pseudo_code": "create_table :events do |t|\n  t.string :title, null: false      # Required title field\n  t.text :description               # Optional description field\n  t.timestamps                      # created_at, updated_at\nend",
+        "type": "Data Layer"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Line 3 adds assigned_user_ids column as text type to events table. Stores JSON array of user IDs selected during event creation. Fulfills AC 9 by enabling storage of 0-many user assignments.",
+        "file_path": "db/migrate/20250129000001_add_assigned_user_ids_to_events.rb",
+        "id": "assigned_user_ids_column_schema",
+        "name": "Assigned User IDs Column Schema",
+        "pseudo_code": "add_column :events, :assigned_user_ids, :text\n\n# Stores JSON data like:\n# '[\"1\", \"2\", \"5\"]' or '[]' for no assignments",
+        "type": "Data Layer"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Line 3 declares RESTful resources for events, creating routes: GET /events/new for form, POST /events for creation, GET /events/:id for detail. Routes all handled by EventsController. Fulfills AC 1 and 13 by providing required endpoints.",
+        "file_path": "config/routes.rb",
+        "id": "rails_routes_configuration",
+        "name": "Rails Routes Configuration",
+        "pseudo_code": "resources :events\n\n# Generates routes:\n# GET    /events/new        -> events#new (show form)\n# POST   /events            -> events#create (create event)\n# GET    /events/:id        -> events#show (display detail)\n# GET    /events/:id/edit   -> events#edit (edit form)\n# PATCH  /events/:id        -> events#update (update event)\n# DELETE /events/:id        -> events#destroy (delete event)",
+        "type": "API"
+      }
+    ],
+    "missing_implementations": []
+  },
+  "task_6659230939_20260405181119": {
+    "implementation": [
+      {
+        "How_is_it_connected_to_implementation": "Retrieves all events from the database ordered by created_at in descending order (newest-first) and assigns them to @events instance variable. This action responds to GET /events and /root_path (per routes.rb:1) and renders the index view.",
+        "file_path": "app/controllers/events_controller.rb",
+        "id": "eventscontroller_index",
+        "line": 5,
+        "name": "EventsController#index",
+        "pseudo_code": "def index\n  @events = Event.all.order(created_at: :desc)\nend\n\nProvides all events to the view, satisfying AC1 (events displayed when at least one exists) and AC2 (ordered newest-first).",
+        "type": "API"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Iterates through @events and renders each event in a list item. For each event, displays title, description with fallback, assigned user count, and View/Edit/Remove action buttons. This template directly fulfills AC1 through AC6.",
+        "file_path": "app/views/events/index.html.erb",
+        "id": "events_index_html_erb_event_list_loop",
+        "line": "5-27",
+        "name": "events/index.html.erb (event list loop)",
+        "pseudo_code": "<ul class=\"event-list\">\n  <% @events.each do |event| %>\n    <li class=\"event-item\">\n      <div>\n        <h3>\n          <%= event.title %>\n          <% if event.assigned_user_count > 0 %>\n            <span class=\"user-count-badge\">\n              <%= event.assigned_user_count %> user<%= 's' if event.assigned_user_count != 1 %>\n            </span>\n          <% end %>\n        </h3>\n        <p><%= event.description.presence || \"No description\" %></p>\n      </div>\n      <div class=\"event-actions\">\n        <%= link_to \"View\", event_path(event) %>\n        <%= link_to \"Edit\", edit_event_path(event) %>\n        <%= form_with delete action %>\n          <%= submit_tag \"Remove\" %>\n        <% end %>\n      </div>\n    </li>\n  <% end %>\n</ul>",
+        "type": "Frontend"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Conditional rendering that displays when @events is empty. Shows 'No events yet' message and provides a link to new_event_path to create the first event. Fulfills AC7 (empty state message) and AC8 (create first event link).",
+        "file_path": "app/views/events/index.html.erb",
+        "id": "events_index_html_erb_empty_state",
+        "line": "30-31",
+        "name": "events/index.html.erb (empty state)",
+        "pseudo_code": "<% if @events.empty? %>\n  <p>\n    No events yet.\n    <%= link_to \"Add your first event\", new_event_path %>.\n  </p>\n<% end %>",
+        "type": "Frontend"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Method that calculates and returns the count of assigned users for an event. Called from the view at index.html.erb:13 to display the 'X users' badge. Returns the size of assigned_user_ids array or 0 if empty, enabling AC5 (user count displayed in format 'X users').",
+        "file_path": "app/models/event.rb",
+        "id": "event_assigned_user_count",
+        "line": "19-21",
+        "name": "Event#assigned_user_count",
+        "pseudo_code": "def assigned_user_count\n  assigned_user_ids&.size || 0\nend",
+        "type": "Business Logic"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Deserializes JSON-stored assigned_user_ids from the database into an array. Returns empty array if value is blank. Supports assigned_user_count method which provides user count for display in the event listing view.",
+        "file_path": "app/models/event.rb",
+        "id": "event_assigned_user_ids_getter",
+        "line": "4-8",
+        "name": "Event#assigned_user_ids (getter)",
+        "pseudo_code": "def assigned_user_ids\n  value = read_attribute(:assigned_user_ids)\n  return [] if value.blank?\n  JSON.parse(value) rescue []\nend",
+        "type": "Business Logic"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Creates the events table with columns: id, title (string, not null), description (text), created_at, updated_at. Stores the core event data and created_at timestamp used for ordering events newest-first in AC2.",
+        "file_path": "db/migrate/20250128000001_create_events.rb",
+        "id": "createevents_migration",
+        "line": "3-8",
+        "name": "CreateEvents migration",
+        "pseudo_code": "create_table :events do |t|\n  t.string :title, null: false\n  t.text :description\n  t.timestamps\nend",
+        "type": "Data Layer"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Adds assigned_user_ids column (text type for JSON storage) to events table. Stores user assignment data which is deserialized by Event#assigned_user_ids and used to calculate assigned_user_count displayed in the event listing.",
+        "file_path": "db/migrate/20250129000001_add_assigned_user_ids_to_events.rb",
+        "id": "addassigneduseridstoevents_migration",
+        "line": "3",
+        "name": "AddAssignedUserIdsToEvents migration",
+        "pseudo_code": "add_column :events, :assigned_user_ids, :text",
+        "type": "Data Layer"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Standard layout template that renders flash messages (notice and alert) at the top of every page including the events listing. Conditional rendering displays 'notice' message when create/update/destroy actions succeed and 'alert' message on errors. Fulfills AC10 (messages in standard areas).",
+        "file_path": "app/views/layouts/application.html.erb",
+        "id": "applicationcontroller_layout_flash_rendering",
+        "line": "604-605",
+        "name": "ApplicationController (layout flash rendering)",
+        "pseudo_code": "<% if notice %>\n  <p class=\"notice\"><%= notice %></p>\n<% end %>\n<% if alert %>\n  <p class=\"alert\"><%= alert %></p>\n<% end %>\n<%= yield %>",
+        "type": "Frontend"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Sets root path to events#index, making the events listing the home page. Also defines resources :events which generates RESTful routes for all event actions. This enables AC9 (event list accessible from Home page) and provides routes for View/Edit/Remove actions.",
+        "file_path": "config/routes.rb",
+        "id": "routes_configuration",
+        "line": "1",
+        "name": "Routes configuration",
+        "pseudo_code": "Rails.application.routes.draw do\n  root \"events#index\"\n  resources :events\nend",
+        "type": "API"
+      },
+      {
+        "How_is_it_connected_to_implementation": "Header navigation includes 'All Events' link (events_path) and 'New Event' link. The header is displayed on all pages including the home page, providing navigation to the event listing. Complements root_path routing to satisfy AC9.",
+        "file_path": "app/views/layouts/application.html.erb",
+        "id": "navigation_header",
+        "line": "556-559",
+        "name": "Navigation header",
+        "pseudo_code": "<nav class=\"nav-links\">\n  <%= link_to \"All Events\", events_path, class: \"nav-link\" %>\n  <%= link_to \"New Event\", new_event_path, class: \"nav-link\" %>\n</nav>",
+        "type": "Frontend"
+      }
+    ],
+    "missing_implementations": []
   }
 }
