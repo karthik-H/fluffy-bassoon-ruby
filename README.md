@@ -29,7 +29,7 @@ Event Manager lets you create and manage **events**. Each event has a title and 
   - **Title** (required)
   - **Description** (optional)
   - **Assign users** — you pick from a list of available users; you can search by name or email and select one or more with checkboxes. A counter shows how many you’ve selected.
-- You then **Save** or **Cancel**. After saving, you are taken to the new event’s page and see a success message.
+
  
 ### Edit an event
 
